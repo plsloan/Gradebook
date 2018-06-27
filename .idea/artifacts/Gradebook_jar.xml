@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="Gradebook:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Gradebook_jar</output-path>
+    <root id="archive" name="Gradebook.jar">
+      <element id="module-output" name="Gradebook" />
+      <element id="extracted-dir" path="C:/sqlite/sqlite-jdbc-3.23.1.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

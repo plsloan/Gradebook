@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gradebook.views.Controller_Home">
+   <children>
+      <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="1015.0" prefViewportHeight="800.0" prefViewportWidth="800.0" prefWidth="1015.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <content>
+            <AnchorPane prefHeight="1080.0" prefWidth="1920.0">
+               <children>
+                <MenuBar AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <menus>
+                    <Menu mnemonicParsing="false" text="Navigation">
+                      <items>
+                        <MenuItem mnemonicParsing="false" onAction="#goToSemesters" text="View Semesters" />
+                              <MenuItem mnemonicParsing="false" onAction="#goToGPA" text="Calculate GPA" />
+                      </items>
+                    </Menu>
+                  </menus>
+                     <padding>
+                        <Insets left="29.0" />
+                     </padding>
+                </MenuBar>
+                  <Label alignment="CENTER" layoutX="274.0" layoutY="64.0" prefHeight="47.0" prefWidth="600.0" text="Current Semester" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="30.0">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <TableView fx:id="homeTable" editable="true" layoutX="55.0" layoutY="85.0" prefHeight="820.0" prefWidth="798.0" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="150.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="80.0">
+                    <columns>
+                      <TableColumn fx:id="prefix" minWidth="63.0" resizable="false" text="Prefix" />
+                        <TableColumn fx:id="number" minWidth="45.33331298828125" resizable="false" text="Number" />
+                        <TableColumn fx:id="description" minWidth="24.6666259765625" prefWidth="190.0" text="Description" />
+                      <TableColumn fx:id="grade" editable="false" minWidth="24.0" prefWidth="86.33331298828125" resizable="false" text="Grade" />
+                        <TableColumn fx:id="ch" maxWidth="112.0" minWidth="-1.0" prefWidth="98.33331298828125" resizable="false" text="Credit Hours" />
+                    </columns>
+                     <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                     </columnResizePolicy>
+                  </TableView>
+                  <Group layoutX="50.0" layoutY="460.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50.0">
+                     <children>
+                        <Text layoutY="22.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Current GPA: ">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Text>
+                        <TextField editable="false" layoutX="111.0" prefHeight="30.0" prefWidth="53.0">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                        <Text layoutX="2.0" layoutY="72.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Overall GPA: ">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Text>
+                        <TextField editable="false" layoutX="111.0" layoutY="50.0" prefHeight="30.0" prefWidth="53.0">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                     </children>
+                  </Group>
+                  <Group layoutX="449.0" layoutY="463.0" AnchorPane.bottomAnchor="55.0" AnchorPane.rightAnchor="125.0">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#goToAddCourse" prefHeight="68.0" prefWidth="130.0" text="Add Course" underline="true">
+                           <graphic>
+                              <ImageView fitHeight="25.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../icons/add.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button fx:id="semesterBtn" layoutX="194.0" mnemonicParsing="false" onAction="#goToSemesters" prefHeight="68.0" prefWidth="130.0" text="View Semesters" underline="true">
+                           <graphic>
+                              <ImageView fitHeight="25.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../icons/view.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                     </children>
+                  </Group>
+                  <Button fx:id="back_home" mnemonicParsing="false" onAction="#goBack" visible="false">
+                     <graphic>
+                        <ImageView fitHeight="10.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../icons/back.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </AnchorPane>
+         </content>
+      </ScrollPane>
+   </children>
+</AnchorPane>
