@@ -36,27 +36,23 @@ public class Controller_Semesters {
             copySemesters = semestersAccordion;
             s = getSemesterNames(Main.gradebookDB);     // set of semesters
 
+            if (semestersAccordion.getPanes().get(0) == firstSemester) {
+                semestersAccordion.getPanes().remove(firstSemester);
+            }
+
 //          if set of semesters is not empty, initialize the page
             if (!s.isClosed()) {
                 semestersAccordion.setVisible(true);
                 emptyLabel.setVisible(false);
-                if (semestersAccordion.getPanes().get(0) == firstSemester) {
-                    semestersAccordion.getPanes().remove(firstSemester);
-                }
 
                 while (s.next()) {
-
                     TitledPane tp = newSemester(s.getString("name"));
                     semestersAccordion.getPanes().addAll(tp);
                     semestersAccordion.setExpandedPane(tp);
-                    table_size++;
                 }
             }
 
-            // if not first time initialized
-            if (currentIndex == 9999) {
-                currentIndex = semestersAccordion.getPanes().size()-1;
-            }
+
 
 //            can't remember which is current semester
 //            // if accordion is not empty, set radio button
@@ -68,6 +64,14 @@ public class Controller_Semesters {
                 }
             }
 
+
+            // if first time initialized, set index
+            if (currentIndex == 9999) {
+                currentIndex = semestersAccordion.getPanes().size()-1;
+            }
+
+            // initialize size
+            table_size = semestersAccordion.getPanes().size();
         }
     }
 
@@ -84,44 +88,67 @@ public class Controller_Semesters {
 //      if input was given
         if (popupTitle != null && !popupTitle.equals("")) {
 
-//          check if table is empty and first has been deleted
-            if (table_size == 0) {
-                semestersAccordion.setVisible(true);
-                semestersAccordion.setExpandedPane(firstSemester);
-                emptyLabel.setVisible(false);
+////          check if table is empty
+//            if (table_size == 0) {
+//                semestersAccordion.setVisible(true);
+//                emptyLabel.setVisible(false);
+//
+//                try {
+//                    insertSemester(Main.gradebookDB, popupTitle);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+////            table is not empty
+//            } else {
+//                try {
+//                    insertSemester(Main.gradebookDB, popupTitle);
+//                    semestersAccordion.setExpandedPane(semestersAccordion.getPanes().get(0));
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
 
-                try {
-                    insertSemester(Main.gradebookDB, popupTitle);
-                    firstSemester.setText(popupTitle);
-                } catch (Exception e) {
-                    e.printStackTrace();
+            try {
+                if (table_size == 0) {
+                    semestersAccordion.setVisible(true);
+                    emptyLabel.setVisible(false);
                 }
-//            table is not empty
-            } else {
-                try {
-                    insertSemester(Main.gradebookDB, popupTitle);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
 
-//          add to accordion
-            TitledPane tp = newSemester(popupTitle);
-            if (!tp.getText().equals(semestersAccordion.getPanes().get(0).getText())) {
+                insertSemester(Main.gradebookDB, popupTitle);
+                TitledPane tp = newSemester(popupTitle);
                 semestersAccordion.getPanes().add(tp);
                 semestersAccordion.setExpandedPane(tp);
-            } else {
-                semestersAccordion.setExpandedPane(semestersAccordion.getPanes().get(0));
-                ((RadioButton)(((AnchorPane)(semestersAccordion.getPanes().get(0).getContent()))
-                        .getChildren().get(0))).setSelected(true);
+
+                // if table_size is 1, set as current semester
+                if (table_size == 1) {
+                    currentSemesterToggle.selectToggle(
+                        ((RadioButton)((AnchorPane)(semestersAccordion.getExpandedPane().getContent())).getChildren().get(0))
+                    );
+                    currentIndex = semestersAccordion.getPanes().indexOf(semestersAccordion.getExpandedPane()) - 1;
+                }
+            } catch (Exception e) {
+                System.out.println(e);
             }
 
-//          if table is only one item, set as current semester
-            if (table_size == 1) {
-                RadioButton r = (RadioButton)((AnchorPane)tp.getContent()).getChildren().get(0);
-                r.setSelected(true);
-                currentIndex = semestersAccordion.getPanes().indexOf(semestersAccordion.getExpandedPane()) - 1;
-            }
+////          add to accordion
+//            TitledPane tp = newSemester(popupTitle);
+//            if (!tp.getText().equals(semestersAccordion.getPanes().get(0).getText())) {
+//                semestersAccordion.getPanes().add(tp);
+//                semestersAccordion.setExpandedPane(tp);
+//            } else {
+//                semestersAccordion.setExpandedPane(semestersAccordion.getPanes().get(0));
+//                ((RadioButton)(((AnchorPane)(semestersAccordion.getPanes().get(0).getContent()))
+//                        .getChildren().get(0))).setSelected(true);
+//            }
+//
+////          if table is only one item, set as current semester
+//            if (table_size == 1) {
+//                currentSemesterToggle.selectToggle(
+//                        ((RadioButton)((AnchorPane)(semestersAccordion.getExpandedPane().getContent())).getChildren().get(0))
+//                );
+//
+//                currentIndex = semestersAccordion.getPanes().indexOf(semestersAccordion.getExpandedPane()) - 1;
+//            }
         }
     }
 
@@ -264,15 +291,13 @@ public class Controller_Semesters {
     private ObservableList<Course> getCourses(String semesterName) throws Exception {
         ObservableList<Course> courses = FXCollections.observableArrayList();
         ResultSet rs;
-        TitledPane tp = null;
-        int id = -1;
+        int id = 1;
 
-        // find semester
+        // find id
         for (int i = 0; i < semestersAccordion.getPanes().size(); i++) {
-            if (semesterName.equals(semestersAccordion.getPanes().get(i).getText()) || table_size == 1) {
-                tp = semestersAccordion.getPanes().get(i);
-                id = i + 1;
-            }
+//            if (semesterName.equals(semestersAccordion.getPanes().get(i).getText())) {
+                id++;
+//            }
         }
 
 
@@ -300,14 +325,16 @@ public class Controller_Semesters {
             }
 
             // get the letter grade
-            if ((received-possible) <= 100) {
+            if ((possible - received) <= 100) {
                 c.add(3, "A");
-            } else if ((received-possible) <= 200) {
+            } else if ((possible - received) <= 200) {
                 c.add(3, "B");
-            } else if ((received-possible) <= 300) {
+            } else if ((possible - received) <= 300) {
                 c.add(3, "C");
-            } else if ((received-possible) <= 400) {
+            } else if ((possible - received) <= 400) {
                 c.add(3, "D");
+            } else if (received == 0 && possible == 1000) {
+                c.add(3, "N/A");
             } else {
                 c.add(3, "F");
             }

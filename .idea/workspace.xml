@@ -6,7 +6,14 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="" />
+    <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradebook.db" beforeDir="false" afterPath="$PROJECT_DIR$/gradebook.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/artifacts/Gradebook_jar/Gradebook.jar" beforeDir="false" afterPath="$PROJECT_DIR$/out/artifacts/Gradebook_jar/Gradebook.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Gradebook/gradebook/views/Controller_Semesters.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Gradebook/gradebook/views/Controller_Semesters.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/gradebook/views/Controller_Semesters.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gradebook/views/Controller_Semesters.java" afterDir="false" />
+    </list>
     <ignored path="JavaFxApplication.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="$PROJECT_DIR$/out/" />
@@ -71,17 +78,28 @@
       <file leaf-file-name="Controller_Semesters.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/gradebook/views/Controller_Semesters.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="217">
-              <caret line="267" column="20" lean-forward="true" selection-start-line="267" selection-start-column="20" selection-end-line="267" selection-end-column="20" />
+            <state relative-caret-position="221">
+              <caret line="67" column="51" selection-start-line="67" selection-start-column="51" selection-end-line="67" selection-end-column="51" />
               <folding>
-                <element signature="method#addSemester#0;class#Controller_Semesters#0" />
-                <element signature="method#insertSemester#0;class#Controller_Semesters#0" />
                 <element signature="method#getSemesterNames#0;class#Controller_Semesters#0" />
-                <element signature="method#deleteSemester#0;class#Controller_Semesters#0" />
+                <element signature="method#newSemester#0;class#Controller_Semesters#0" />
+                <element signature="method#getCourses#0;class#Controller_Semesters#0" />
                 <element signature="method#goToHome#0;class#Controller_Semesters#0" />
                 <element signature="method#goToGPA#0;class#Controller_Semesters#0" />
                 <element signature="method#goToAddCourse#0;class#Controller_Semesters#0" />
                 <element signature="method#goBack#0;class#Controller_Semesters#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Controller_Home.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/gradebook/views/Controller_Home.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="193">
+              <caret line="44" column="11" selection-start-line="44" selection-start-column="11" selection-end-line="44" selection-end-column="11" />
+              <folding>
+                <element signature="imports" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -98,15 +116,9 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>newsemester</find>
-      <find>newsem</find>
-      <find>firstseme</find>
-      <find>id</find>
-      <find>observablelist</find>
       <find>observa</find>
       <find>courses.</find>
       <find>data</find>
-      <find>tableview</find>
       <find>column</find>
       <find>table</find>
       <find>name</find>
@@ -126,14 +138,23 @@
       <find>setcurr</find>
       <find>setselected</find>
       <find>id_course =</find>
+      <find>tableview</find>
+      <find>current</find>
+      <find>table_size++</find>
       <find>currentindex</find>
       <find>getcourses</find>
+      <find>firstseme</find>
+      <find>insertseme</find>
+      <find>received</find>
     </findStrings>
   </component>
   <component name="FindManager">
     <FindUsagesManager>
       <setting name="OPEN_NEW_TAB" value="false" />
     </FindUsagesManager>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -171,6 +192,7 @@
     <option name="width" value="1614" />
     <option name="height" value="876" />
   </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectReloadState">
     <option name="STATE" value="0" />
   </component>
@@ -179,7 +201,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
@@ -211,6 +232,7 @@
         </subPane>
       </pane>
       <pane id="AndroidView" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -359,8 +381,8 @@
       <window_info anchor="right" id="Capture Analysis" order="7" />
       <window_info anchor="bottom" id="Event Log" order="8" side_tool="true" />
       <window_info anchor="right" id="Maven Projects" order="4" />
-      <window_info anchor="bottom" id="Version Control" order="12" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.32130584" />
+      <window_info anchor="bottom" id="Version Control" order="12" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32130584" />
       <window_info anchor="bottom" id="Terminal" order="13" />
       <window_info id="Capture Tool" order="5" />
       <window_info id="Designer" order="2" />
@@ -403,24 +425,6 @@
           <option name="timeStamp" value="197" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/gradebook/views/Controller_Semesters.java</url>
-          <line>87</line>
-          <properties />
-          <option name="timeStamp" value="204" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/gradebook/views/Controller_Semesters.java</url>
-          <line>108</line>
-          <properties />
-          <option name="timeStamp" value="205" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/gradebook/views/Controller_Semesters.java</url>
-          <line>136</line>
-          <properties />
-          <option name="timeStamp" value="206" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/gradebook/views/Controller_AddCourse.java</url>
           <line>68</line>
           <properties />
@@ -428,21 +432,21 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/gradebook/views/Controller_Semesters.java</url>
-          <line>199</line>
+          <line>226</line>
           <properties />
           <option name="timeStamp" value="231" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/gradebook/views/Controller_Semesters.java</url>
-          <line>270</line>
+          <line>304</line>
           <properties />
-          <option name="timeStamp" value="232" />
+          <option name="timeStamp" value="236" />
         </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="234" />
+      <option name="time" value="242" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="Application">
@@ -465,6 +469,11 @@
     <expressions id="watch">
       <expression>
         <expression-string>semestersAccordion.getPanes().size()</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>table_size++;</expression-string>
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
@@ -503,18 +512,6 @@
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
-      <expression>
-        <expression-string>semestersAccordion.getPanes().indexOf(semestersAccordion.getExpandedPane())</expression-string>
-        <language-id>JAVA</language-id>
-        <custom-info>javafx.css.StyleableBooleanProperty</custom-info>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>(((AnchorPane)(semestersAccordion.getPanes().get(0).getContent())).getChildren().get(0))</expression-string>
-        <language-id>JAVA</language-id>
-        <custom-info>javafx.css.StyleableBooleanProperty</custom-info>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
     </expressions>
   </component>
   <component name="editorHistoryManager">
@@ -526,8 +523,8 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/gradebook/views/Home.fxml">
-      <provider editor-type-id="text-editor" />
       <provider selected="true" editor-type-id="JavaFX-Scene-Builder" />
+      <provider editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/src/gradebook/Controller_Main.java" />
     <entry file="file://$PROJECT_DIR$/src/sample/Main.java" />
@@ -549,15 +546,15 @@
     <entry file="file://$PROJECT_DIR$/src/gradebook/Controller_Main.java" />
     <entry file="file://$PROJECT_DIR$/src/gradebook/Controller_Scene.java" />
     <entry file="file://$PROJECT_DIR$/src/gradebook/views/Home.fxml">
-      <provider editor-type-id="text-editor" />
       <provider selected="true" editor-type-id="JavaFX-Scene-Builder" />
+      <provider editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/src/gradebook/Controller_Add.java" />
     <entry file="file://$PROJECT_DIR$/src/gradebook/views/Course_Add.fxml">
+      <provider editor-type-id="JavaFX-Scene-Builder" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-153" />
       </provider>
-      <provider editor-type-id="JavaFX-Scene-Builder" />
     </entry>
     <entry file="file://$PROJECT_DIR$/src/gradebook/Controller_AddCourse.java" />
     <entry file="file://$PROJECT_DIR$/src/gradebook/Controller_GPA.java" />
@@ -593,12 +590,12 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/gradebook/views/Course_View.fxml">
+      <provider selected="true" editor-type-id="JavaFX-Scene-Builder" />
       <provider editor-type-id="text-editor">
         <state relative-caret-position="17">
           <caret line="21" column="243" selection-start-line="21" selection-start-column="243" selection-end-line="21" selection-end-column="243" />
         </state>
       </provider>
-      <provider selected="true" editor-type-id="JavaFX-Scene-Builder" />
     </entry>
     <entry file="file://$PROJECT_DIR$/src/gradebook/views/Controller_ViewCourse.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -608,12 +605,12 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/gradebook/views/Semesters.fxml">
+      <provider editor-type-id="JavaFX-Scene-Builder" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="17">
           <caret line="44" column="25" selection-start-line="44" selection-start-column="25" selection-end-line="44" selection-end-column="25" />
         </state>
       </provider>
-      <provider editor-type-id="JavaFX-Scene-Builder" />
     </entry>
     <entry file="file://$PROJECT_DIR$/src/gradebook/Grade.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -624,20 +621,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/gradebook/Semester.java" />
     <entry file="file://$PROJECT_DIR$/src/gradebook/Class.java" />
-    <entry file="jar://C:/Program Files/Java/jdk-10/lib/src.zip!/javafx.base/javafx/collections/FXCollections.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="316" selection-start-line="316" selection-end-line="316" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/sqlite/sqlite-jdbc-3.23.1.jar!/org/sqlite/jdbc3/JDBC3ResultSet.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="290" selection-start-line="290" selection-end-line="290" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Program Files/Java/jdk-10/lib/src.zip!/javafx.base/javafx/util/Callback.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="229">
@@ -666,13 +649,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/gradebook/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="18" column="54" lean-forward="true" selection-start-line="18" selection-start-column="54" selection-end-line="18" selection-end-column="54" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/gradebook/views/Controller_GPA.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="17">
@@ -698,40 +674,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/gradebook/views/Controller_Home.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="121" selection-start-line="121" selection-end-line="121" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk-10/lib/src.zip!/javafx.fxml/javafx/fxml/FXMLLoader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="100">
-          <caret line="1670" selection-start-line="1670" selection-end-line="1670" />
-          <folding>
-            <element signature="e#67760#67761#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk-10/lib/src.zip!/javafx.controls/javafx/scene/control/Button.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="268">
-          <caret line="201" selection-start-line="201" selection-end-line="201" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk-10/lib/src.zip!/javafx.graphics/javafx/scene/Node.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="8865" selection-start-line="8865" selection-end-line="8865" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Program Files/Java/jdk-10/lib/src.zip!/javafx.controls/javafx/scene/control/ToggleButton.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="108">
@@ -746,6 +688,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="jar://C:/Program Files/Java/jdk-10/lib/src.zip!/javafx.graphics/javafx/scene/Node.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="8865" selection-start-line="8865" selection-end-line="8865" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk-10/lib/src.zip!/javafx.controls/javafx/scene/control/Button.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="268">
+          <caret line="201" selection-start-line="201" selection-end-line="201" />
+        </state>
+      </provider>
+    </entry>
     <entry file="jar://C:/Program Files/Java/jdk-10/lib/src.zip!/javafx.base/javafx/event/Event.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="189">
@@ -756,7 +712,7 @@
     <entry file="jar://C:/Program Files/Java/jdk-10/lib/src.zip!/javafx.graphics/javafx/scene/Scene.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="100">
-          <caret line="2613" column="9" lean-forward="true" selection-start-line="2613" selection-start-column="9" selection-end-line="2613" selection-end-column="9" />
+          <caret line="2613" selection-start-line="2613" selection-end-line="2613" />
           <folding>
             <element signature="e#70522#70523#0" expanded="true" />
             <element signature="e#70568#70569#0" expanded="true" />
@@ -766,15 +722,59 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/gradebook/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="18" selection-start-line="18" selection-end-line="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk-10/lib/src.zip!/javafx.fxml/javafx/fxml/FXMLLoader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="100">
+          <caret line="3121" selection-start-line="3121" selection-end-line="3121" />
+          <folding>
+            <element signature="e#67760#67761#0" expanded="true" />
+            <element signature="e#67805#67806#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/gradebook/views/Controller_Home.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="193">
+          <caret line="44" column="11" selection-start-line="44" selection-start-column="11" selection-end-line="44" selection-end-column="11" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/sqlite/sqlite-jdbc-3.23.1.jar!/org/sqlite/jdbc3/JDBC3ResultSet.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="108">
+          <caret line="290" selection-start-line="290" selection-end-line="290" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk-10/lib/src.zip!/javafx.base/javafx/collections/FXCollections.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="108">
+          <caret line="316" selection-start-line="316" selection-end-line="316" />
+          <folding>
+            <element signature="e#12252#12253#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/gradebook/views/Controller_Semesters.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="217">
-          <caret line="267" column="20" lean-forward="true" selection-start-line="267" selection-start-column="20" selection-end-line="267" selection-end-column="20" />
+        <state relative-caret-position="221">
+          <caret line="67" column="51" selection-start-line="67" selection-start-column="51" selection-end-line="67" selection-end-column="51" />
           <folding>
-            <element signature="method#addSemester#0;class#Controller_Semesters#0" />
-            <element signature="method#insertSemester#0;class#Controller_Semesters#0" />
             <element signature="method#getSemesterNames#0;class#Controller_Semesters#0" />
-            <element signature="method#deleteSemester#0;class#Controller_Semesters#0" />
+            <element signature="method#newSemester#0;class#Controller_Semesters#0" />
+            <element signature="method#getCourses#0;class#Controller_Semesters#0" />
             <element signature="method#goToHome#0;class#Controller_Semesters#0" />
             <element signature="method#goToGPA#0;class#Controller_Semesters#0" />
             <element signature="method#goToAddCourse#0;class#Controller_Semesters#0" />
