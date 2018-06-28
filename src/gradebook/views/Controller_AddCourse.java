@@ -25,7 +25,6 @@ import static gradebook.views.Controller_Semesters.copySemesters;
 
 public class Controller_AddCourse {
     @FXML private Button submitCourseBtn;
-    @FXML private Button addCategoryBtn;
     @FXML private TextField prefix;
     @FXML private TextField number;
     @FXML private TextField description;
@@ -35,7 +34,7 @@ public class Controller_AddCourse {
     @FXML private TableView<Category> categoriesTable;
     @FXML private TableColumn<Category, String> name_col;
     @FXML private TableColumn<Category, Integer> weight_col;
-    public TitledPane currentSemester;
+    private TitledPane currentSemester;
     private ObservableList<Category> categories = FXCollections.observableArrayList();
     private final ObservableList<Category> data = categories;
     private int id_course = 1;
@@ -60,34 +59,7 @@ public class Controller_AddCourse {
         }
     }
 
-    @FXML
-    private void addCategory() {
-        // create and add category
-        Category category = new Category(name_field.getText(), Integer.parseInt(weight_field.getText()));
-        categories.addAll(category);
-
-        // add to database
-        try {
-            Statement statement = Main.gradebookDB.createStatement();
-
-            // get data
-            int id = getCategoryId();
-            id_course = getCourseID();
-            String sql_insertCategory = "INSERT INTO Course_Categories (id, id_course, name, weight) " +
-                    "VALUES (" + Integer.toString(id) + ", " + Integer.toString(id_course) + ", \"" + category.name +
-                    "\", " + Integer.toString(category.weight) + ")";
-
-            statement.execute(sql_insertCategory);
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-
-
-        // reset fields
-        name_field.setText("");
-        weight_field.setText("");
-    }
-
+    // Helpers ----------------------------------------------------
     private int getCategoryId() {
         int id = 1;
 
@@ -122,6 +94,37 @@ public class Controller_AddCourse {
         }
 
         return id;
+    }
+    // ------------------------------------------------------------
+
+
+    // Controls ---------------------------------------------------
+    @FXML
+    private void addCategory() {
+        // create and add category
+        Category category = new Category(name_field.getText(), Integer.parseInt(weight_field.getText()));
+        categories.addAll(category);
+
+        // add to database
+        try {
+            Statement statement = Main.gradebookDB.createStatement();
+
+            // get data
+            int id = getCategoryId();
+            id_course = getCourseID();
+            String sql_insertCategory = "INSERT INTO Course_Categories (id, id_course, name, weight) " +
+                    "VALUES (" + Integer.toString(id) + ", " + Integer.toString(id_course) + ", \"" + category.name +
+                    "\", " + Integer.toString(category.weight) + ")";
+
+            statement.execute(sql_insertCategory);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+
+        // reset fields
+        name_field.setText("");
+        weight_field.setText("");
     }
 
     @FXML
@@ -162,7 +165,10 @@ public class Controller_AddCourse {
             System.out.println(e);
         }
     }
+    // ------------------------------------------------------------
 
+
+    // Navigation -------------------------------------------------
     @FXML
     private void goToHome() throws IOException {
         Parent homeParent = FXMLLoader.load(getClass().getResource("Home.fxml"));

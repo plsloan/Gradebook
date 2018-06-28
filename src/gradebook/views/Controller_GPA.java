@@ -13,6 +13,10 @@ import java.io.IOException;
 public class Controller_GPA {
     @FXML private Label gpaLabel;
 
+
+
+
+    // Navigation ------------------------------------------------
     @FXML
     private void goToHome() throws IOException {
         Parent homeParent = FXMLLoader.load(getClass().getResource("Home.fxml"));

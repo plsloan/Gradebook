@@ -126,15 +126,15 @@
                      <children>
                         <Accordion layoutY="7.0" prefHeight="482.0" prefWidth="495.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <panes>
-                            <TitledPane animated="false" text="Exams">
+                            <TitledPane animated="false" text="Category">
                               <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
                                           <TableView editable="true" layoutX="32.6" layoutY="28.6" prefHeight="321.0" prefWidth="420.0" AnchorPane.bottomAnchor="65.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                                             <columns>
-                                              <TableColumn prefWidth="75.0" text="Name" />
-                                              <TableColumn prefWidth="70.99999237060547" text="Grade" />
-                                                <TableColumn prefWidth="70.99999237060547" text="Out of" />
+                                              <TableColumn fx:id="name" prefWidth="75.0" text="Name" />
+                                              <TableColumn fx:id="received" prefWidth="70.99999237060547" text="Points" />
+                                                <TableColumn fx:id="possible" prefWidth="70.99999237060547" text="Out of" />
                                             </columns>
                                              <columnResizePolicy>
                                                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -144,44 +144,6 @@
                                        </children>
                                     </AnchorPane>
                               </content>
-                            </TitledPane>
-                            <TitledPane animated="false" text="Research Paper">
-                                 <content>
-                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                       <children>
-                                          <TableView editable="true" layoutX="32.6" layoutY="28.6" prefHeight="321.0" prefWidth="420.0" AnchorPane.bottomAnchor="65.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
-                                             <columns>
-                                                <TableColumn prefWidth="75.0" text="Name" />
-                                                <TableColumn prefWidth="70.99999237060547" text="Grade" />
-                                                <TableColumn prefWidth="70.99999237060547" text="Out of" />
-                                             </columns>
-                                             <columnResizePolicy>
-                                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                                             </columnResizePolicy>
-                                          </TableView>
-                                          <Button layoutX="39.599998474121094" layoutY="359.3999938964844" mnemonicParsing="false" prefHeight="25.0" prefWidth="330.0" text="Add Grade" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
-                                       </children>
-                                    </AnchorPane>
-                                 </content>
-                            </TitledPane>
-                            <TitledPane animated="false" text="Quizzes">
-                                 <content>
-                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                       <children>
-                                          <TableView editable="true" layoutX="32.6" layoutY="28.6" prefHeight="321.0" prefWidth="420.0" AnchorPane.bottomAnchor="65.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
-                                             <columns>
-                                                <TableColumn prefWidth="75.0" text="Name" />
-                                                <TableColumn prefWidth="70.99999237060547" text="Grade" />
-                                                <TableColumn prefWidth="70.99999237060547" text="Out of" />
-                                             </columns>
-                                             <columnResizePolicy>
-                                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                                             </columnResizePolicy>
-                                          </TableView>
-                                          <Button layoutX="39.599998474121094" layoutY="359.3999938964844" mnemonicParsing="false" prefHeight="25.0" prefWidth="330.0" text="Add Grade" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
-                                       </children>
-                                    </AnchorPane>
-                                 </content>
                             </TitledPane>
                           </panes>
                         </Accordion>

@@ -13,6 +13,21 @@ import java.io.IOException;
 public class Controller_ViewCourse {
     @FXML private Label viewLabel;
 
+    public void initialize() {
+
+    }
+
+    // Helpers ----------------------------------------------
+
+    // ------------------------------------------------------
+
+
+    // Controls ---------------------------------------------
+
+    // ------------------------------------------------------
+
+
+    // Navigation -------------------------------------------
     @FXML
     private void goToHome() throws IOException {
         Parent homeParent = FXMLLoader.load(getClass().getResource("Home.fxml"));

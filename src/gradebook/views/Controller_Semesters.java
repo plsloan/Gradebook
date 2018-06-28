@@ -26,15 +26,14 @@ public class Controller_Semesters {
     @FXML private TitledPane firstSemester;
     @FXML public Accordion semestersAccordion;
     @FXML public ToggleGroup currentSemesterToggle;
-    public static Accordion copySemesters;
-    public static int currentIndex = 9999;
+    static Accordion copySemesters;
+    static int currentIndex = 9999;
     private int table_size = 0;
-    private ResultSet s = null;
 
     public void initialize() throws Exception {
         if (Main.gradebookDB != null) {
             copySemesters = semestersAccordion;
-            s = getSemesterNames(Main.gradebookDB);     // set of semesters
+            ResultSet s = getSemesterNames(Main.gradebookDB);     // set of semesters
 
             if (semestersAccordion.getPanes().get(0) == firstSemester) {
                 semestersAccordion.getPanes().remove(firstSemester);
@@ -60,8 +59,7 @@ public class Controller_Semesters {
             // initialize size
             table_size = semestersAccordion.getPanes().size();
 
-//            can't remember which is current semester
-//            // if accordion is not empty, set radio button
+            // if accordion is not empty, set radio button
             if (currentIndex > -1 && semestersAccordion.getExpandedPane() != null) {
                 semestersAccordion.setExpandedPane(semestersAccordion.getPanes().get(currentIndex));
                 if (semestersAccordion.getPanes().indexOf(semestersAccordion.getExpandedPane()) == currentIndex) {
@@ -72,81 +70,22 @@ public class Controller_Semesters {
         }
     }
 
-    @FXML // create TitledPane
-    public void addSemester() {
-//      create popup for input
-        TextInputDialog popup = new TextInputDialog();
-        popup.setTitle("Enter Semester Name...");
-        popup.setHeaderText("Enter name of the new semester below...");
-        popup.setContentText("Name: ");
-        popup.showAndWait();
-        String popupTitle = popup.getResult();
 
-//      if input was given
-        if (popupTitle != null && !popupTitle.equals("")) {
+    // Helpers -----------------------------------------------------------------------------------
+    // get results from query of names from semesters
+    private ResultSet getSemesterNames(Connection c) throws Exception {
+        Statement statement;
+        ResultSet rs = null;
 
-////          check if table is empty
-//            if (table_size == 0) {
-//                semestersAccordion.setVisible(true);
-//                emptyLabel.setVisible(false);
-//
-//                try {
-//                    insertSemester(Main.gradebookDB, popupTitle);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-////            table is not empty
-//            } else {
-//                try {
-//                    insertSemester(Main.gradebookDB, popupTitle);
-//                    semestersAccordion.setExpandedPane(semestersAccordion.getPanes().get(0));
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-
-            try {
-                if (table_size == 0) {
-                    semestersAccordion.setVisible(true);
-                    emptyLabel.setVisible(false);
-                }
-
-                insertSemester(Main.gradebookDB, popupTitle);
-                TitledPane tp = newSemester(popupTitle);
-                semestersAccordion.getPanes().add(tp);
-                semestersAccordion.setExpandedPane(tp);
-
-                // if table_size is 1, set as current semester
-                if (table_size == 1) {
-                    currentSemesterToggle.selectToggle(
-                        ((RadioButton)((AnchorPane)(semestersAccordion.getExpandedPane().getContent())).getChildren().get(0))
-                    );
-                    currentIndex = semestersAccordion.getPanes().indexOf(semestersAccordion.getExpandedPane()) - 1;
-                }
-            } catch (Exception e) {
-                System.out.println(e);
-            }
-
-////          add to accordion
-//            TitledPane tp = newSemester(popupTitle);
-//            if (!tp.getText().equals(semestersAccordion.getPanes().get(0).getText())) {
-//                semestersAccordion.getPanes().add(tp);
-//                semestersAccordion.setExpandedPane(tp);
-//            } else {
-//                semestersAccordion.setExpandedPane(semestersAccordion.getPanes().get(0));
-//                ((RadioButton)(((AnchorPane)(semestersAccordion.getPanes().get(0).getContent()))
-//                        .getChildren().get(0))).setSelected(true);
-//            }
-//
-////          if table is only one item, set as current semester
-//            if (table_size == 1) {
-//                currentSemesterToggle.selectToggle(
-//                        ((RadioButton)((AnchorPane)(semestersAccordion.getExpandedPane().getContent())).getChildren().get(0))
-//                );
-//
-//                currentIndex = semestersAccordion.getPanes().indexOf(semestersAccordion.getExpandedPane()) - 1;
-//            }
+        try {
+            statement = c.createStatement();
+            String sql = "SELECT name FROM semesters ORDER BY id";
+            rs = statement.executeQuery(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+
+        return rs;
     }
 
     // add to database & increment table size
@@ -162,22 +101,6 @@ public class Controller_Semesters {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    // get results from query of names from semesters
-    private ResultSet getSemesterNames(Connection c) throws Exception {
-        Statement statement;
-        ResultSet rs = null;
-
-        try {
-            statement = c.createStatement();
-            String sql = "SELECT name FROM semesters ORDER BY id";
-            rs = statement.executeQuery(sql);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return rs;
     }
 
     // template for semester accordion items
@@ -207,6 +130,7 @@ public class Controller_Semesters {
             }
         });
 
+
         delete.setText("Delete Semester");
         delete.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -219,7 +143,9 @@ public class Controller_Semesters {
             }
         });
 
-        // set table column data
+
+
+        // set table column data ----------
         try {
             final ObservableList<Course> data = getCourses(title);
             tv.setItems(data);
@@ -251,6 +177,9 @@ public class Controller_Semesters {
 
         tv.getColumns().addAll(prefix, number, description, grade, credit_hours);
 
+        // --------------------------------
+
+
         add.setText("Add Course");
         add.setOnAction(new EventHandler<>() {
             @Override public void handle(ActionEvent event) {
@@ -262,6 +191,8 @@ public class Controller_Semesters {
             }
         });
 
+
+        // set constraints ---------------
         AnchorPane.setTopAnchor(rb, 10.0);
         AnchorPane.setLeftAnchor(rb, 10.0);
 
@@ -277,6 +208,9 @@ public class Controller_Semesters {
         AnchorPane.setRightAnchor(add, 40.0);
         AnchorPane.setBottomAnchor(add, 0.0);
 
+        // -------------------------------
+
+
         pane.getChildren().addAll(rb, tv, add, delete);
         template.setContent(pane);
         template.setExpanded(true);
@@ -284,6 +218,7 @@ public class Controller_Semesters {
         return template;
     }
 
+    // help for newSemester
     // change for multiple courses
     private ObservableList<Course> getCourses(String semesterName) throws Exception {
         ObservableList<Course> courses = FXCollections.observableArrayList();
@@ -340,6 +275,47 @@ public class Controller_Semesters {
 
         return courses;
     }
+    // -------------------------------------------------------------------------------------------
+
+
+    // Controls ----------------------------------------------------------------------------------
+    @FXML // create TitledPane
+    public void addSemester() {
+//      create popup for input
+        TextInputDialog popup = new TextInputDialog();
+        popup.setTitle("Enter Semester Name...");
+        popup.setHeaderText("Enter name of the new semester below...");
+        popup.setContentText("Name: ");
+        popup.showAndWait();
+        String popupTitle = popup.getResult();
+
+//      if input was given
+        if (popupTitle != null && !popupTitle.equals("")) {
+
+            try {
+                if (table_size == 0) {
+                    semestersAccordion.setVisible(true);
+                    emptyLabel.setVisible(false);
+                }
+
+                insertSemester(Main.gradebookDB, popupTitle);
+                TitledPane tp = newSemester(popupTitle);
+                semestersAccordion.getPanes().add(tp);
+                semestersAccordion.setExpandedPane(tp);
+
+                // if table_size is 1, set as current semester
+                if (table_size == 1) {
+                    currentSemesterToggle.selectToggle(
+                            ((RadioButton)((AnchorPane)(semestersAccordion.getExpandedPane().getContent())).getChildren().get(0))
+                    );
+                    currentIndex = semestersAccordion.getPanes().indexOf(semestersAccordion.getExpandedPane()) - 1;
+                }
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+
+        }
+    }
 
     @FXML
     public void deleteSemester() throws Exception {
@@ -393,7 +369,10 @@ public class Controller_Semesters {
     public void setCurrentSemester() {
         currentIndex = semestersAccordion.getPanes().indexOf(semestersAccordion.getExpandedPane());
     }
+    // -------------------------------------------------------------------------------------------
 
+
+    // Navigation --------------------------------------------------------------------------------
     @FXML
     private void goToHome() throws IOException {
         Parent homeParent = FXMLLoader.load(getClass().getResource("Home.fxml"));

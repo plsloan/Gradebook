@@ -73,7 +73,7 @@
                         <TextField editable="false" layoutX="120.0" layoutY="41.0" prefHeight="25.0" prefWidth="50.0" />
                      </children>
                   </Group>
-                  <Separator layoutX="50.0" layoutY="186.0" prefWidth="200.0" />
+                  <Separator layoutX="50.0" layoutY="186.0" prefWidth="200.0" AnchorPane.leftAnchor="50.0" AnchorPane.topAnchor="186.0" />
                   <Separator layoutX="244.0" layoutY="64.0" orientation="VERTICAL" prefHeight="99.0" prefWidth="5.0" AnchorPane.bottomAnchor="45.0" AnchorPane.leftAnchor="250.0" AnchorPane.topAnchor="75.0" />
                   <TableView editable="true" layoutX="279.0" layoutY="77.0" prefHeight="400.0" prefWidth="500.0" AnchorPane.bottomAnchor="125.0" AnchorPane.leftAnchor="280.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="80.0">
                     <columns>

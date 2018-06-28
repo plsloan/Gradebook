@@ -30,7 +30,7 @@ public class Controller_Home {
     @FXML private TableColumn<Course, String> description;
     @FXML private TableColumn<Course, String> grade;
     @FXML private TableColumn<Course, Integer> ch;
-    public static int semesterID;
+    static int semesterID;
 
     public void initialize() {
         back_home.visibleProperty().bind(new SimpleBooleanProperty(titles.size() > 1));
@@ -40,6 +40,7 @@ public class Controller_Home {
         getCurrentTable();
     }
 
+    // Helpers -----------------------------------------------------
     private void getCurrentTable() {
         try {
             ObservableList<Course> data = FXCollections.observableArrayList();
@@ -124,7 +125,10 @@ public class Controller_Home {
 
         return s;
     }
+    // -------------------------------------------------------------
 
+
+    // Navigation --------------------------------------------------
     @FXML
     private void goToSemesters() throws IOException {
         Parent SemestersParent = FXMLLoader.load(getClass().getResource("Semesters.fxml"));
