@@ -4,17 +4,22 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuBar;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
 public class Controller_ViewCourse {
     @FXML private Label viewLabel;
+    @FXML private TextField prefix;
+    @FXML private TextField number;
+    @FXML private TextField description;
+    @FXML private TextField credit_hours;
+    @FXML private Accordion categoryAccordion;
+    @FXML private TitledPane firstCategory;
 
     public void initialize() {
-
+        
     }
 
     // Helpers ----------------------------------------------
