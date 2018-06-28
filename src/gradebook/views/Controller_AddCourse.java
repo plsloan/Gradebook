@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+import static gradebook.views.Controller_Home.semesterID;
 import static gradebook.views.Controller_Home.titles;
 import static gradebook.views.Controller_Semesters.copySemesters;
 
@@ -38,22 +39,18 @@ public class Controller_AddCourse {
     private ObservableList<Category> categories = FXCollections.observableArrayList();
     private final ObservableList<Category> data = categories;
     private int id_course = 1;
-    public static int id_semester = 1;
-
+    private int id_semester = 1;
 
 
     public void initialize() {
         if (Main.gradebookDB != null) {
-
-            if (titles.get(titles.size()-1).equals("Home")) {
-
-            } else if (titles.get(titles.size()-1).equals("Semesters")) {
+            if (titles.get(titles.size()-1).equals("Semesters")) {
                 if (copySemesters.getPanes().size() != 0) {
                     currentSemester = copySemesters.getExpandedPane();
                 }
             }
 
-            // get data from database
+            // get category data from database
             categoriesTable.setItems(data);
 
             name_col.setCellValueFactory((TableColumn.CellDataFeatures<Category, String> p) ->
@@ -139,8 +136,13 @@ public class Controller_AddCourse {
         course.add(5, Integer.parseInt(credit_hours.getText()));
         course.add(categories);
 
-        id_semester = copySemesters.getPanes().indexOf(currentSemester) + 1;
-        id_course = getCourseID();
+        if (titles.get(titles.size()-1-1).equals("Semesters")) {
+            id_semester = copySemesters.getPanes().indexOf(currentSemester) + 1;
+        } else if (titles.get(titles.size()-1-1).equals("Home")) {
+            id_semester = semesterID;   // get from home page
+        }
+
+        id_course = getCourseID();  // fix - make last id + 1
 
         // sql statement
         try {

@@ -30,11 +30,13 @@ public class Controller_Home {
     @FXML private TableColumn<Course, String> description;
     @FXML private TableColumn<Course, String> grade;
     @FXML private TableColumn<Course, Integer> ch;
+    public static int semesterID;
 
     public void initialize() {
         back_home.visibleProperty().bind(new SimpleBooleanProperty(titles.size() > 1));
 
-        // get most recent table
+        // get Current Semester table
+        // also sets semesterID
         getCurrentTable();
     }
 
@@ -54,22 +56,28 @@ public class Controller_Home {
                     "credit_hours FROM Courses WHERE id_semester=" + Integer.toString(s) + ";";
             ResultSet rs = statement.executeQuery(sql_getRecentTable);
 
+            // gets letter grade string
+            // adds data
             while (rs.next()) {
                 String letter_grade;
                 int received = rs.getInt("received_points");
                 int possible = rs.getInt("possible_points");
 
-                if (received - possible <= 100) {
+                if (possible - received <= 100) {
                     letter_grade = "A";
-                } else if (received - possible <= 200) {
+                } else if (possible - received <= 200) {
                     letter_grade = "B";
-                } else if (received - possible <= 300) {
+                } else if (possible - received <= 300) {
                     letter_grade = "C";
-                } else if (received - possible <= 400) {
+                } else if (possible - received <= 400) {
                     letter_grade = "D";
+                } else if(received == 0 && possible == 1000) {
+                    letter_grade = "N/A";
                 } else {
                     letter_grade = "F";
                 }
+
+                semesterID = rs.getInt("id_semester");
 
                 data.addAll(new Course(
                         rs.getString("prefix"),

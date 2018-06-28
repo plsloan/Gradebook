@@ -52,7 +52,13 @@ public class Controller_Semesters {
                 }
             }
 
+            // if first time initialized, set index
+            if (currentIndex == 9999) {
+                currentIndex = semestersAccordion.getPanes().size()-1;
+            }
 
+            // initialize size
+            table_size = semestersAccordion.getPanes().size();
 
 //            can't remember which is current semester
 //            // if accordion is not empty, set radio button
@@ -63,15 +69,6 @@ public class Controller_Semesters {
                     semestersAccordion.setExpandedPane(semestersAccordion.getPanes().get(currentIndex));
                 }
             }
-
-
-            // if first time initialized, set index
-            if (currentIndex == 9999) {
-                currentIndex = semestersAccordion.getPanes().size()-1;
-            }
-
-            // initialize size
-            table_size = semestersAccordion.getPanes().size();
         }
     }
 
