@@ -44,10 +44,10 @@ public class Controller_Home {
     private void getCurrentTable() {
         try {
             ObservableList<Course> data = FXCollections.observableArrayList();
-            int s = getCurrentSize();
+            int s = getCurrentIndex();
             if (Controller_Semesters.copySemesters != null && Controller_Semesters.currentIndex != -1) {
                 TitledPane titledPane = Controller_Semesters.copySemesters.getPanes().get(Controller_Semesters.currentIndex);
-                s = Controller_Semesters.copySemesters.getPanes().indexOf(titledPane) + 1;
+                s = getCurrentIndex(Controller_Semesters.copySemesters.getPanes().indexOf(titledPane) + 1);
             } else if (Controller_Semesters.currentIndex != 9999) {
                 s = Controller_Semesters.currentIndex + 1;
             }
@@ -107,7 +107,7 @@ public class Controller_Home {
         }
     }
 
-    private int getCurrentSize() {
+    private int getCurrentIndex() {
         int s = 0;
 
         try {
@@ -116,7 +116,7 @@ public class Controller_Home {
             ResultSet rs = statement.executeQuery(sql);
 
             while (rs.next()) {
-                s++;
+                s = rs.getInt("id");
             }
 
         } catch (Exception e) {
@@ -124,6 +124,25 @@ public class Controller_Home {
         }
 
         return s;
+    }
+
+    private int getCurrentIndex(int index) {
+        try {
+            Statement statement = Main.gradebookDB.createStatement();
+            String sql = "SELECT * FROM Semesters;";
+            ResultSet rs = statement.executeQuery(sql);
+
+            for (int i = 0; i < index; i++) {
+                rs.next();
+            }
+
+            return rs.getInt("id");
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return -1;
     }
     // -------------------------------------------------------------
 

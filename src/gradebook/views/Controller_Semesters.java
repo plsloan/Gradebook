@@ -94,13 +94,62 @@ public class Controller_Semesters {
 
         try {
             statement = c.createStatement();
-            String sql = "INSERT INTO semesters (id, name) VALUES (\"" + Integer.toString(table_size + 1) + "\", " +
+            String sql = "INSERT INTO semesters (id, name) VALUES (" + Integer.toString(getSemesterID()) + ", " +
                     "\"" + name +"\");";
             statement.executeUpdate(sql);
             table_size++;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    // used to set insertSemester's ID
+    private int getSemesterID() {
+        ResultSet rs;
+        int id = -1;
+
+        try {
+            Statement statement = Main.gradebookDB.createStatement();
+            String sql = "SELECT id FROM Semesters;";
+            rs = statement.executeQuery(sql);
+
+            if (!rs.isClosed()) {
+                while (rs.next()) {
+                    id = rs.getInt("id") + 1;
+                }
+            } else {
+                id = 1;
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return id;
+    }
+
+    private int getSemesterID(String name) {
+        ResultSet rs;
+        int id = -1;
+
+        try {
+            Statement statement = Main.gradebookDB.createStatement();
+            String sql = "SELECT id, name FROM Semesters;";
+            rs = statement.executeQuery(sql);
+
+            if (!rs.isClosed()) {
+                while (rs.next()) {
+                    if (semestersAccordion.getExpandedPane().getText().equals(rs.getString("name"))) {
+                        id = rs.getInt("id");
+                    }
+                }
+            } else {
+                id = 1;
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return id;
     }
 
     // template for semester accordion items
@@ -223,14 +272,22 @@ public class Controller_Semesters {
     private ObservableList<Course> getCourses(String semesterName) throws Exception {
         ObservableList<Course> courses = FXCollections.observableArrayList();
         ResultSet rs;
-        int id = 1;
+        int id = 0, num;
 
-        // find id
-        for (int i = 0; i < semestersAccordion.getPanes().size(); i++) {
-//            if (semesterName.equals(semestersAccordion.getPanes().get(i).getText())) {
-                id++;
-//            }
+        // get semesters number
+        Statement s = Main.gradebookDB.createStatement();
+        String sql_num = "SELECT * FROM Semesters;";
+        ResultSet resultSet = s.executeQuery(sql_num);
+
+        // find current semester id
+        num = semestersAccordion.getPanes().size() + 1;
+        for (int i = 0; i < num; i++) {
+            resultSet.next();
         }
+
+        id = resultSet.getInt("id");
+
+
 
 
         // create sql statement
@@ -319,12 +376,12 @@ public class Controller_Semesters {
 
     @FXML
     public void deleteSemester() throws Exception {
-        int id = semestersAccordion.getPanes().indexOf(semestersAccordion.getExpandedPane()) + 1;
         String name = semestersAccordion.getExpandedPane().getText();
+        int id = getSemesterID(name);
 
         Statement statement = Main.gradebookDB.createStatement();
         String sql_semesters = "DELETE FROM semesters WHERE name=" + "\"" + name + "\";";
-        String sql_courses = "DELETE FROM courses WHERE id_semester = " + id + ";";
+        String sql_courses = "DELETE FROM courses WHERE id_semester=" + id + ";";
 
         Alert warn = new Alert(Alert.AlertType.CONFIRMATION);
         warn.setTitle("Are you sure?");
@@ -337,7 +394,7 @@ public class Controller_Semesters {
         // semester is deleted
         if (result.get() == ButtonType.OK) {
             try {
-                semestersAccordion.getPanes().remove(id-1);
+                semestersAccordion.getPanes().remove(semestersAccordion.getExpandedPane());
                 statement.execute(sql_semesters);
                 statement.execute(sql_courses);
                 if (currentIndex >= 0) {

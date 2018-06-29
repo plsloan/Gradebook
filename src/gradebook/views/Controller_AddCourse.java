@@ -61,15 +61,19 @@ public class Controller_AddCourse {
 
     // Helpers ----------------------------------------------------
     private int getCategoryId() {
-        int id = 1;
+        int id = -1;
 
         try {
             Statement statement = Main.gradebookDB.createStatement();
-            String sql = "SELECT * FROM Course_Categories;";
+            String sql = "SELECT id FROM Course_Categories;";
             ResultSet rs = statement.executeQuery(sql);
 
-            while (rs.next()) {
-                id++;
+            if (!rs.isClosed()){
+                while (rs.next()) {
+                    id = rs.getInt("id") + 1;
+                }
+            } else {
+                id = 1;
             }
         } catch (Exception e) {
             System.out.println(e);
@@ -78,16 +82,45 @@ public class Controller_AddCourse {
         return id;
     }
 
+    private int getSemesterID() {
+        if (titles.get(titles.size()-1-1).equals("Semesters")) {
+            int index = copySemesters.getPanes().indexOf(currentSemester) + 1;
+            int id = -1;
+
+            try {
+                Statement statement = Main.gradebookDB.createStatement();
+                String sql = "SELECT * FROM Semesters;";
+                ResultSet rs = statement.executeQuery(sql);
+
+                for (int i = 0; i < index; i++) {
+                    rs.next();
+                }
+
+                id = rs.getInt("id");
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+
+            return id;
+        } else {
+            return semesterID;   // get from home page
+        }
+    }
+
     private int getCourseID() {
-        int id = 1;
+        int id = -1;
 
         try {
             Statement statement = Main.gradebookDB.createStatement();
-            String sql = "SELECT * FROM Courses;";
+            String sql = "SELECT id FROM Courses;";
             ResultSet rs = statement.executeQuery(sql);
 
-            while (rs.next()) {
-                id++;
+            if (!rs.isClosed()){
+                while(rs.next()) {
+                    id = rs.getInt("id") + 1;
+                }
+            } else {
+                id = 1;
             }
         } catch (Exception e) {
             System.out.println(e);
@@ -139,13 +172,9 @@ public class Controller_AddCourse {
         course.add(5, Integer.parseInt(credit_hours.getText()));
         course.add(categories);
 
-        if (titles.get(titles.size()-1-1).equals("Semesters")) {
-            id_semester = copySemesters.getPanes().indexOf(currentSemester) + 1;
-        } else if (titles.get(titles.size()-1-1).equals("Home")) {
-            id_semester = semesterID;   // get from home page
-        }
-
-        id_course = getCourseID();  // fix - make last id + 1
+        // get semester id
+        id_semester = getSemesterID();
+        id_course = getCourseID();
 
         // sql statement
         try {

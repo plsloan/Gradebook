@@ -133,15 +133,15 @@
                                                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                              </columnResizePolicy>
                                           </TableView>
-                                          <Button layoutX="39.599998474121094" layoutY="359.3999938964844" mnemonicParsing="false" prefHeight="25.0" prefWidth="330.0" text="Add Grade" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" />
-                                          <Button layoutX="332.0" layoutY="14.0" mnemonicParsing="false" onAction="#deleteSemester" text="Delete Category" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="10.0" />
+                                          <Button layoutX="39.599998474121094" layoutY="359.3999938964844" mnemonicParsing="false" onAction="#addGrade" prefHeight="25.0" prefWidth="330.0" text="Add Grade" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" />
+                                          <Button layoutX="332.0" layoutY="14.0" mnemonicParsing="false" onAction="#deleteCategory" text="Delete Category" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="10.0" />
                                        </children>
                                     </AnchorPane>
                               </content>
                             </TitledPane>
                           </panes>
                         </Accordion>
-                        <Button layoutX="153.0" layoutY="430.0" mnemonicParsing="false" prefHeight="56.0" prefWidth="190.0" text="Add Category" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0">
+                        <Button layoutX="153.0" layoutY="430.0" mnemonicParsing="false" onAction="#addCategory" prefHeight="56.0" prefWidth="190.0" text="Add Category" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0">
                            <graphic>
                               <ImageView fitHeight="25.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -152,7 +152,7 @@
                         </Button>
                      </children>
                   </AnchorPane>
-                  <Button layoutX="112.0" layoutY="451.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="197.0" text="Submit Changes" AnchorPane.bottomAnchor="85.0" AnchorPane.leftAnchor="110.0" AnchorPane.topAnchor="450.0">
+                  <Button layoutX="112.0" layoutY="451.0" mnemonicParsing="false" onAction="#submitChanges" prefHeight="60.0" prefWidth="197.0" text="Submit Changes" AnchorPane.bottomAnchor="85.0" AnchorPane.leftAnchor="110.0" AnchorPane.topAnchor="450.0">
                      <font>
                         <Font size="16.0" />
                      </font>
