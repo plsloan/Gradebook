@@ -28,6 +28,7 @@ public class Controller_Semesters {
     @FXML public ToggleGroup currentSemesterToggle;
     static Accordion copySemesters;
     static int currentIndex = 9999;
+    static int viewCourseID = 9999;
     private int table_size = 0;
 
     public void initialize() throws Exception {
@@ -157,9 +158,9 @@ public class Controller_Semesters {
         TitledPane template = new TitledPane();
         AnchorPane pane = new AnchorPane();
         RadioButton rb = new RadioButton();
-        Button delete = new Button();
+        Button delete = new Button("Delete Semester");
         TableView<Course> tv = new TableView<>();
-        Button add = new Button();
+        Button add = new Button("Add Course");
 
         template.setId(title.trim());
         template.setText(title);
@@ -179,8 +180,6 @@ public class Controller_Semesters {
             }
         });
 
-
-        delete.setText("Delete Semester");
         delete.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -191,7 +190,15 @@ public class Controller_Semesters {
                 }
             }
         });
-
+        add.setOnAction(new EventHandler<>() {
+            @Override public void handle(ActionEvent event) {
+                try {
+                    goToAddCourse();
+                } catch (IOException ioe) {
+                    System.out.println(ioe);
+                }
+            }
+        });
 
 
         // set table column data ----------
@@ -229,18 +236,6 @@ public class Controller_Semesters {
         // --------------------------------
 
 
-        add.setText("Add Course");
-        add.setOnAction(new EventHandler<>() {
-            @Override public void handle(ActionEvent event) {
-                try {
-                    goToAddCourse();
-                } catch (IOException ioe) {
-                    System.out.println(ioe);
-                }
-            }
-        });
-
-
         // set constraints ---------------
         AnchorPane.setTopAnchor(rb, 10.0);
         AnchorPane.setLeftAnchor(rb, 10.0);
@@ -272,9 +267,8 @@ public class Controller_Semesters {
     private ObservableList<Course> getCourses(String semesterName) throws Exception {
         ObservableList<Course> courses = FXCollections.observableArrayList();
         ResultSet rs;
-        int id = 0, num;
+        int id, num;
 
-        // get semesters number
         Statement s = Main.gradebookDB.createStatement();
         String sql_num = "SELECT * FROM Semesters;";
         ResultSet resultSet = s.executeQuery(sql_num);
@@ -418,8 +412,6 @@ public class Controller_Semesters {
             radio.setSelected(true);
             semestersAccordion.setExpandedPane(titledPane);
         }
-
-//        shiftDatabase();
     }
 
     @FXML

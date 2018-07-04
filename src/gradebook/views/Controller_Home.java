@@ -24,6 +24,8 @@ public class Controller_Home {
     public static List<String> titles = new ArrayList<>();
     @FXML private Button semesterBtn;
     @FXML private Button back_home;
+    @FXML private TextField current_GPA;
+    @FXML private TextField overall_GPA;
     @FXML private TableView<Course> homeTable;
     @FXML private TableColumn<Course, String> prefix;
     @FXML private TableColumn<Course, Integer> number;
@@ -38,6 +40,8 @@ public class Controller_Home {
         // get Current Semester table
         // also sets semesterID
         getCurrentTable();
+        setCurrentGPA();
+        setOverallGPA();
     }
 
     // Helpers -----------------------------------------------------
@@ -101,6 +105,61 @@ public class Controller_Home {
                     new SimpleStringProperty(p.getValue().letter_grade));
             ch.setCellValueFactory((TableColumn.CellDataFeatures<Course, Integer> p) ->
                     new SimpleIntegerProperty(p.getValue().credit_hours).asObject());
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    private void setCurrentGPA() {
+        try {
+            String gpa;
+            Statement statement = Main.gradebookDB.createStatement();
+            String get_semester = "SELECT id, name, printf(\"%.2f\", gpa) as gpa " +
+                    "FROM Semesters " +
+                    "WHERE id=" + Integer.toString(semesterID) + ";";
+            ResultSet rs = statement.executeQuery(get_semester);
+
+            while(rs.next()) {
+                gpa = Double.toString(rs.getDouble("gpa"));
+                if (gpa.length() >= 4) {
+                    gpa = gpa.substring(0, 4);
+                }
+                current_GPA.setText(gpa);
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    private void setOverallGPA() {
+        double quality_points = 0;
+        double credits = 0.0;
+
+        try {
+            String gpa;
+            Statement statement = Main.gradebookDB.createStatement();
+            String get_overall = "SELECT id, name, printf(\"%.2f\", gpa) as gpa, credits " +
+                    "FROM Semesters;";
+            ResultSet rs = statement.executeQuery(get_overall);
+
+            while (rs.next()) {
+                quality_points += rs.getDouble("gpa") * rs.getInt("credits");
+                credits += rs.getInt("credits");
+            }
+
+            gpa = Double.toString(quality_points/credits);
+
+            // check for rounding
+            if (gpa.length() >= 4) {
+                if (Character.getNumericValue(gpa.charAt(4)) >= 5) {
+                    gpa = gpa.substring(0, 3) + Integer.toString(Character.getNumericValue(gpa.charAt(3)) + 1);
+                } else {
+                    gpa = gpa.substring(0, 4);
+                }
+            }
+
+            overall_GPA.setText(gpa);
 
         } catch (Exception e) {
             System.out.println(e);

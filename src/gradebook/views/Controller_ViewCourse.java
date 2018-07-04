@@ -1,14 +1,23 @@
 package gradebook.views;
 
 import gradebook.Category;
+import gradebook.Course;
+import gradebook.Grade;
 import gradebook.Main;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.util.Pair;
@@ -125,33 +134,108 @@ public class Controller_ViewCourse {
     }
 
     private int getCourseID() {
-        ResultSet rs;
-        int id = -1;
-
-        try {
-            Statement statement = Main.gradebookDB.createStatement();
-
-            /************************
-             * Fix SQL statement    *
-             ***********************/
-
-            String sql = "SELECT id FROM Courses;";
-            rs = statement.executeQuery(sql);
-
-            while (rs.next()) {
-                id = rs.getInt("id");
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-
-        return id;
+        return Controller_Semesters.viewCourseID;
     }
 
     // template for Categories (TitledPane)
     private TitledPane newCategory(Category category) {
         TitledPane template = new TitledPane();
+        AnchorPane content = new AnchorPane();
+        TableView<Grade> categoryTableView = new TableView<>();
+        Button addGrade = new Button("Add Grade");
+        Button deleteCategory = new Button("Delete Category");
+
+        template.setId(category.name.trim());
+        template.setText(category.name);
+        template.setAnimated(true);
+        template.setCollapsible(true);
+
+        addGrade.setOnAction(new EventHandler<>() {
+            @Override public void handle(ActionEvent event) {
+                try {
+                    addGrade();
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+            }
+        });
+        deleteCategory.setOnAction(new EventHandler<>() {
+            @Override public void handle(ActionEvent event) {
+                try {
+                    deleteCategory();
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+            }
+        });
+
+
+        // add data
+        try {
+            final ObservableList<Grade> data = getGrades(category.name);
+            categoryTableView.setItems(data);
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+
+        // add tableView columns
+        TableColumn<Grade, String> name = new TableColumn<>("Name");
+        name.setCellValueFactory((TableColumn.CellDataFeatures<Grade, String> p) ->
+                new SimpleStringProperty(p.getValue().name));
+
+        TableColumn<Grade, Integer> points = new TableColumn<>("Points");
+        points.setCellValueFactory((TableColumn.CellDataFeatures<Grade, Integer> p) ->
+                new SimpleIntegerProperty(p.getValue().received).asObject());
+
+        TableColumn<Grade, Integer> outOf = new TableColumn<>("Out Of");
+        outOf.setCellValueFactory((TableColumn.CellDataFeatures<Grade, Integer> p) ->
+                new SimpleIntegerProperty(p.getValue().possible).asObject());
+
+        categoryTableView.getColumns().addAll(name, points, outOf);
+
+
+        // set positions
+        AnchorPane.setTopAnchor(categoryTableView, 45.0);
+        AnchorPane.setBottomAnchor(categoryTableView, 60.0);
+        AnchorPane.setLeftAnchor(categoryTableView, 20.0);
+        AnchorPane.setRightAnchor(categoryTableView, 20.0);
+
+        AnchorPane.setBottomAnchor(addGrade, 20.0);
+        AnchorPane.setLeftAnchor(addGrade, 100.0);
+        AnchorPane.setRightAnchor(addGrade, 100.0);
+
+        AnchorPane.setTopAnchor(deleteCategory, 10.0);
+        AnchorPane.setRightAnchor(deleteCategory, 20.0);
+
+        content.getChildren().addAll(categoryTableView, addGrade, deleteCategory);
+        template.setContent(content);
+        template.setExpanded(true);
+
         return template;
+    }
+
+    // used to get grades for newCategory()
+    private ObservableList<Grade> getGrades(String categoryName) {
+        ObservableList<Grade> grades = FXCollections.observableArrayList();
+        ResultSet rs = null;
+
+        // get grades for category id
+        try {
+            Statement statement = Main.gradebookDB.createStatement();
+            String sql = "SELECT * FROM Course_Categories WHERE name=" + categoryName +
+                    " AND id_course=" + getCourseID() + ";";
+            rs = statement.executeQuery(sql);
+
+            Category c = new Category();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        // will need to find course id as well
+
+        return grades;
     }
 
     // ------------------------------------------------------
@@ -164,8 +248,8 @@ public class Controller_ViewCourse {
         Dialog<Pair<String, Integer>> popup = categoryPopup();
         Optional<Pair<String, Integer>> result = popup.showAndWait();
 
-        // get results
         result.ifPresent(nameWeight -> {
+            // get results
             final String name = nameWeight.getKey();
             final Integer weight = nameWeight.getValue();
             Category category = new Category(name, weight);
@@ -179,6 +263,17 @@ public class Controller_ViewCourse {
     }
 
     @FXML
+    private void submitChanges() {
+
+
+        // finished... return to previous page
+        try {
+            goBack();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
     private void deleteCategory() {
         String name = categoryAccordion.getExpandedPane().getText();
 
@@ -199,21 +294,8 @@ public class Controller_ViewCourse {
         }
     }
 
-    @FXML
     private void addGrade() {
 
-    }
-
-    @FXML
-    private void submitChanges() {
-
-
-        // finished... return to previous page
-        try {
-            goBack();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
     }
     // ------------------------------------------------------
 

@@ -123,7 +123,7 @@
                               <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
-                                          <TableView editable="true" layoutX="47.6" layoutY="54.6" prefHeight="240.0" prefWidth="385.0" AnchorPane.bottomAnchor="62.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="45.0">
+                                          <TableView editable="true" layoutX="47.6" layoutY="54.6" prefHeight="240.0" prefWidth="385.0" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="45.0">
                                             <columns>
                                               <TableColumn prefWidth="75.0" text="Name" />
                                               <TableColumn prefWidth="70.99999237060547" text="Points" />
