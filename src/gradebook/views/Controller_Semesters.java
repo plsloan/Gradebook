@@ -443,6 +443,7 @@ public class Controller_Semesters {
             RadioButton radio = (RadioButton) ((AnchorPane)titledPane.getContent()).getChildren().get(0);
             radio.setSelected(true);
             semestersAccordion.setExpandedPane(titledPane);
+            setCurrentSemester();
         }
     }
 

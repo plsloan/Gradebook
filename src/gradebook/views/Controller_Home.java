@@ -143,6 +143,7 @@ public class Controller_Home {
                 if (gpa.length() >= 4) {
                     gpa = gpa.substring(0, 4);
                 }
+
                 current_GPA.setText(gpa);
             }
         } catch (Exception e) {
@@ -177,7 +178,11 @@ public class Controller_Home {
                 }
             }
 
-            overall_GPA.setText(gpa);
+            if (gpa.equals("NaN")) {
+                overall_GPA.setText("N/A");
+            } else {
+                overall_GPA.setText(gpa);
+            }
 
         } catch (Exception e) {
             System.out.println(e);
