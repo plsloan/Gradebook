@@ -13,6 +13,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
@@ -28,6 +29,7 @@ public class Controller_Semesters {
     @FXML public Accordion semestersAccordion;
     @FXML public ToggleGroup currentSemesterToggle;
     static Accordion copySemesters;
+    static Course clickedCourse;
     static int currentIndex = 9999;
     static int viewCourseID = 9999;
     private int table_size = 0;
@@ -241,6 +243,20 @@ public class Controller_Semesters {
 
 
         tv.getColumns().addAll(prefix, number, description, grade, credit_hours);
+        tv.setOnMousePressed(new EventHandler<>() {
+            @Override
+            public void handle(MouseEvent click) {
+                if (click.isPrimaryButtonDown() && click.getClickCount() == 2) {
+                     clickedCourse = tv.getSelectionModel().getSelectedItem();
+
+                     try {
+                         goToViewCourse();
+                     } catch (Exception e) {
+                         System.out.println(e);
+                     }
+                }
+            }
+        });
 
         // --------------------------------
 
@@ -504,6 +520,19 @@ public class Controller_Semesters {
         window.show();
 
         Controller_Home.titles.add("Add Course");
+    }
+
+    @FXML
+    private void goToViewCourse() throws IOException {
+        Parent viewCourseParent = FXMLLoader.load(getClass().getResource("Course_View.fxml"));
+        Scene viewCourse = new Scene(viewCourseParent);
+
+        Stage window = (Stage) semesterLabel.getScene().getWindow();
+        window.setScene(viewCourse);
+        window.setTitle(clickedCourse.description);
+        window.show();
+
+        Controller_Home.titles.add("View Course");
     }
 
     @FXML

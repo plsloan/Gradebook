@@ -28,12 +28,16 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Optional;
 
+import static gradebook.views.Controller_Semesters.clickedCourse;
+
 public class Controller_ViewCourse {
     @FXML private Label viewLabel;
     @FXML private TextField prefix;
     @FXML private TextField number;
     @FXML private TextField description;
     @FXML private TextField credit_hours;
+    @FXML private TextField points;
+    @FXML private TextField letter_grade;
     @FXML private Accordion categoryAccordion;
     @FXML private TitledPane firstCategory;
 
@@ -47,7 +51,13 @@ public class Controller_ViewCourse {
 
 
     public void initialize() {
+        prefix.setText(clickedCourse.prefix);
+        number.setText(Integer.toString(clickedCourse.number));
+        description.setText(clickedCourse.description);
+        credit_hours.setText(Integer.toString(clickedCourse.credit_hours));
 
+        points.setText("0");
+        letter_grade.setText(clickedCourse.letter_grade);
     }
 
     // Helpers ----------------------------------------------
@@ -274,6 +284,7 @@ public class Controller_ViewCourse {
         }
     }
 
+    @FXML
     private void deleteCategory() {
         String name = categoryAccordion.getExpandedPane().getText();
 
@@ -294,6 +305,7 @@ public class Controller_ViewCourse {
         }
     }
 
+    @FXML
     private void addGrade() {
 
     }

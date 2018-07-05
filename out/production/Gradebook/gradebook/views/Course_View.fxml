@@ -101,12 +101,12 @@
                               <Font size="16.0" />
                            </font>
                         </Label>
-                        <TextField editable="false" layoutX="114.0" prefHeight="30.0" prefWidth="50.0">
+                        <TextField fx:id="points" editable="false" layoutX="114.0" prefHeight="30.0" prefWidth="50.0">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <TextField editable="false" layoutX="114.0" layoutY="48.0" prefHeight="30.0" prefWidth="50.0">
+                        <TextField fx:id="letter_grade" editable="false" layoutX="114.0" layoutY="48.0" prefHeight="30.0" prefWidth="50.0">
                            <font>
                               <Font size="14.0" />
                            </font>
