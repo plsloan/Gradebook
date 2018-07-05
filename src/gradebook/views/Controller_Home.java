@@ -20,6 +20,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import static gradebook.views.Controller_Semesters.*;
+
 public class Controller_Home {
     public static List<String> titles = new ArrayList<>();
     @FXML private Button semesterBtn;
@@ -39,26 +41,42 @@ public class Controller_Home {
 
         // get Current Semester table
         // also sets semesterID
+        initializeCurrentIndex();
         getCurrentTable();
         setCurrentGPA();
         setOverallGPA();
     }
 
     // Helpers -----------------------------------------------------
+    // initialize currentIndex
+    private void initializeCurrentIndex() {
+        int index = 0;
+        try {
+            Statement statement = Main.gradebookDB.createStatement();
+            String sql = "SELECT name, current_home FROM Semesters;";
+            ResultSet rs = statement.executeQuery(sql);
+
+            while (rs.next()) {
+                if (rs.getBoolean("current_home")) {
+                    currentIndex = index;
+                }
+                else {
+                    index++;
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
     private void getCurrentTable() {
         try {
             ObservableList<Course> data = FXCollections.observableArrayList();
-            int s = getCurrentIndex();
-            if (Controller_Semesters.copySemesters != null && Controller_Semesters.currentIndex != -1) {
-                TitledPane titledPane = Controller_Semesters.copySemesters.getPanes().get(Controller_Semesters.currentIndex);
-                s = getCurrentIndex(Controller_Semesters.copySemesters.getPanes().indexOf(titledPane) + 1);
-            } else if (Controller_Semesters.currentIndex != 9999) {
-                s = Controller_Semesters.currentIndex + 1;
-            }
+            int index = getCurrentIndex();
 
             Statement statement = Main.gradebookDB.createStatement();
             String sql_getRecentTable = "SELECT id_semester, prefix, number, description, received_points, possible_points, " +
-                    "credit_hours FROM Courses WHERE id_semester=" + Integer.toString(s) + ";";
+                    "credit_hours FROM Courses WHERE id_semester=" + Integer.toString(index) + ";";
             ResultSet rs = statement.executeQuery(sql_getRecentTable);
 
             // gets letter grade string
@@ -167,7 +185,8 @@ public class Controller_Home {
     }
 
     private int getCurrentIndex() {
-        int s = 0;
+        int s = -1;
+        int index = -1;
 
         try {
             Statement statement = Main.gradebookDB.createStatement();
@@ -175,14 +194,17 @@ public class Controller_Home {
             ResultSet rs = statement.executeQuery(sql);
 
             while (rs.next()) {
-                s = rs.getInt("id");
+                s++;
+                if (s == currentIndex) {
+                    index = rs.getInt("id");
+                }
             }
 
         } catch (Exception e) {
             System.out.println(e);
         }
 
-        return s;
+        return index;
     }
 
     private int getCurrentIndex(int index) {
