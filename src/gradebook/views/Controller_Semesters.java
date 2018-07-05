@@ -16,6 +16,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
+import javax.swing.plaf.nimbus.State;
 import java.io.IOException;
 import java.sql.*;
 import java.util.Optional;
@@ -30,6 +31,14 @@ public class Controller_Semesters {
     static int currentIndex = 9999;
     static int viewCourseID = 9999;
     private int table_size = 0;
+
+    /****************************************************************
+     * Add to initialize                                            *
+     * -- check database for current_home                           *
+     *                                                              *
+     * Add to setCurrentSemester()                                  *
+     * -- set current_home and set current "true" value to false    *
+     ****************************************************************/
 
     public void initialize() throws Exception {
         if (Main.gradebookDB != null) {
@@ -54,7 +63,7 @@ public class Controller_Semesters {
 
             // if first time initialized, set index
             if (currentIndex == 9999) {
-                currentIndex = semestersAccordion.getPanes().size()-1;
+                initializeCurrentIndex();
             }
 
             // initialize size
@@ -326,6 +335,27 @@ public class Controller_Semesters {
 
         return courses;
     }
+
+    // initialize currentIndex
+    private void initializeCurrentIndex() {
+        int index = 0;
+        try {
+            Statement statement = Main.gradebookDB.createStatement();
+            String sql = "SELECT name, current_home FROM Semesters;";
+            ResultSet rs = statement.executeQuery(sql);
+
+            while (rs.next()) {
+                if (rs.getBoolean("current_home")) {
+                    currentIndex = index;
+                }
+                else {
+                    index++;
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
     // -------------------------------------------------------------------------------------------
 
 
@@ -359,7 +389,9 @@ public class Controller_Semesters {
                     currentSemesterToggle.selectToggle(
                             ((RadioButton)((AnchorPane)(semestersAccordion.getExpandedPane().getContent())).getChildren().get(0))
                     );
-                    currentIndex = semestersAccordion.getPanes().indexOf(semestersAccordion.getExpandedPane()) - 1;
+
+                    setCurrentSemester();
+                    currentIndex--;
                 }
             } catch (Exception e) {
                 System.out.println(e);
@@ -416,7 +448,19 @@ public class Controller_Semesters {
 
     @FXML
     public void setCurrentSemester() {
+        String name = semestersAccordion.getExpandedPane().getText();
         currentIndex = semestersAccordion.getPanes().indexOf(semestersAccordion.getExpandedPane());
+
+        // alter database
+        try {
+            Statement statement = Main.gradebookDB.createStatement();
+            String all_false = "UPDATE Semesters SET current_home=0;";
+            String set_current = "UPDATE Semesters SET current_home=1 WHERE name=\"" + name + "\";";
+            statement.executeUpdate(all_false);
+            statement.executeUpdate(set_current);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
     // -------------------------------------------------------------------------------------------
 
