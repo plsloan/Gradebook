@@ -31,7 +31,7 @@ public class Controller_Semesters {
     static Accordion copySemesters;
     static Course clickedCourse;
     static int currentIndex = 9999;
-    static int viewCourseID = 9999;
+    static String viewCourseName = "name";
     private int table_size = 0;
 
     /****************************************************************
@@ -82,10 +82,116 @@ public class Controller_Semesters {
         }
     }
 
+    // Controls ----------------------------------------------------------------------------------
+    @FXML // create TitledPane
+    public void addSemester() {
+//      create popup for input
+        TextInputDialog popup = new TextInputDialog();
+        popup.setTitle("Enter Semester Name...");
+        popup.setHeaderText("Enter name of the new semester below...");
+        popup.setContentText("Name: ");
+        popup.showAndWait();
+        String popupTitle = popup.getResult();
+
+//      if input was given
+        if (popupTitle != null && !popupTitle.equals("")) {
+
+            try {
+                if (table_size == 0) {
+                    semestersAccordion.setVisible(true);
+                    emptyLabel.setVisible(false);
+                }
+
+                insertSemester(Main.gradebookDB, popupTitle);
+                TitledPane tp = newSemester(popupTitle);
+                semestersAccordion.getPanes().add(tp);
+                semestersAccordion.setExpandedPane(tp);
+
+                // if table_size is 1, set as current semester
+                if (table_size == 1) {
+                    currentSemesterToggle.selectToggle(
+                            ((RadioButton)((AnchorPane)(semestersAccordion.getExpandedPane().getContent())).getChildren().get(0))
+                    );
+
+                    setCurrentSemester();
+                    currentIndex--;
+                }
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+
+        }
+    }
+
+    @FXML
+    public void deleteSemester() throws Exception {
+        String name = semestersAccordion.getExpandedPane().getText();
+        int id = getSemesterID(name);
+
+        Statement statement = Main.gradebookDB.createStatement();
+        String sql_semesters = "DELETE FROM semesters WHERE name=" + "\"" + name + "\";";
+        String sql_courses = "DELETE FROM courses WHERE id_semester=" + id + ";";
+
+        Alert warn = new Alert(Alert.AlertType.CONFIRMATION);
+        warn.setTitle("Are you sure?");
+        warn.setHeaderText(null);
+        warn.setContentText("Are you sure you would like to delete this semester?\n" +
+                            "This will delete all grades, courses, and other information.");
+
+        Optional<ButtonType> result = warn.showAndWait();
+
+        // semester is deleted
+        if (result.get() == ButtonType.OK) {
+            try {
+                semestersAccordion.getPanes().remove(semestersAccordion.getExpandedPane());
+                statement.execute(sql_semesters);
+                statement.execute(sql_courses);
+                if (currentIndex >= 0) {
+                    currentIndex--;
+                }
+                table_size--;
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+
+        }
+
+        // was firstSemester deleted?
+        if (semestersAccordion.getPanes().size() == 0) {
+            semestersAccordion.setVisible(false);
+            emptyLabel.setVisible(true);
+        } else {
+            TitledPane titledPane = semestersAccordion.getPanes().get(table_size - 1);
+
+            RadioButton radio = (RadioButton) ((AnchorPane)titledPane.getContent()).getChildren().get(0);
+            radio.setSelected(true);
+            semestersAccordion.setExpandedPane(titledPane);
+            setCurrentSemester();
+        }
+    }
+
+    @FXML
+    public void setCurrentSemester() {
+        String name = semestersAccordion.getExpandedPane().getText();
+        currentIndex = semestersAccordion.getPanes().indexOf(semestersAccordion.getExpandedPane());
+
+        // alter database
+        try {
+            Statement statement = Main.gradebookDB.createStatement();
+            String all_false = "UPDATE Semesters SET current_home=0;";
+            String set_current = "UPDATE Semesters SET current_home=1 WHERE name=\"" + name + "\";";
+            statement.executeUpdate(all_false);
+            statement.executeUpdate(set_current);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+    // -------------------------------------------------------------------------------------------
+
 
     // Helpers -----------------------------------------------------------------------------------
     // get results from query of names from semesters
-    private ResultSet getSemesterNames(Connection c) throws Exception {
+    private ResultSet getSemesterNames(Connection c) {
         Statement statement;
         ResultSet rs = null;
 
@@ -247,13 +353,13 @@ public class Controller_Semesters {
             @Override
             public void handle(MouseEvent click) {
                 if (click.isPrimaryButtonDown() && click.getClickCount() == 2) {
-                     clickedCourse = tv.getSelectionModel().getSelectedItem();
+                    clickedCourse = tv.getSelectionModel().getSelectedItem();
 
-                     try {
-                         goToViewCourse();
-                     } catch (Exception e) {
-                         System.out.println(e);
-                     }
+                    try {
+                        goToViewCourse();
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
                 }
             }
         });
@@ -368,113 +474,6 @@ public class Controller_Semesters {
                     index++;
                 }
             }
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    }
-    // -------------------------------------------------------------------------------------------
-
-
-    // Controls ----------------------------------------------------------------------------------
-    @FXML // create TitledPane
-    public void addSemester() {
-//      create popup for input
-        TextInputDialog popup = new TextInputDialog();
-        popup.setTitle("Enter Semester Name...");
-        popup.setHeaderText("Enter name of the new semester below...");
-        popup.setContentText("Name: ");
-        popup.showAndWait();
-        String popupTitle = popup.getResult();
-
-//      if input was given
-        if (popupTitle != null && !popupTitle.equals("")) {
-
-            try {
-                if (table_size == 0) {
-                    semestersAccordion.setVisible(true);
-                    emptyLabel.setVisible(false);
-                }
-
-                insertSemester(Main.gradebookDB, popupTitle);
-                TitledPane tp = newSemester(popupTitle);
-                semestersAccordion.getPanes().add(tp);
-                semestersAccordion.setExpandedPane(tp);
-
-                // if table_size is 1, set as current semester
-                if (table_size == 1) {
-                    currentSemesterToggle.selectToggle(
-                            ((RadioButton)((AnchorPane)(semestersAccordion.getExpandedPane().getContent())).getChildren().get(0))
-                    );
-
-                    setCurrentSemester();
-                    currentIndex--;
-                }
-            } catch (Exception e) {
-                System.out.println(e);
-            }
-
-        }
-    }
-
-    @FXML
-    public void deleteSemester() throws Exception {
-        String name = semestersAccordion.getExpandedPane().getText();
-        int id = getSemesterID(name);
-
-        Statement statement = Main.gradebookDB.createStatement();
-        String sql_semesters = "DELETE FROM semesters WHERE name=" + "\"" + name + "\";";
-        String sql_courses = "DELETE FROM courses WHERE id_semester=" + id + ";";
-
-        Alert warn = new Alert(Alert.AlertType.CONFIRMATION);
-        warn.setTitle("Are you sure?");
-        warn.setHeaderText(null);
-        warn.setContentText("Are you sure you would like to delete this semester?\n" +
-                            "This will delete all grades, courses, and other information.");
-
-        Optional<ButtonType> result = warn.showAndWait();
-
-        // semester is deleted
-        if (result.get() == ButtonType.OK) {
-            try {
-                semestersAccordion.getPanes().remove(semestersAccordion.getExpandedPane());
-                statement.execute(sql_semesters);
-                statement.execute(sql_courses);
-                if (currentIndex >= 0) {
-                    currentIndex--;
-                }
-                table_size--;
-            } catch (Exception e) {
-                System.out.println(e);
-            }
-
-        }
-
-        // was firstSemester deleted?
-        if (semestersAccordion.getPanes().size() == 0) {
-            semestersAccordion.setVisible(false);
-            emptyLabel.setVisible(true);
-        } else {
-            TitledPane titledPane = semestersAccordion.getPanes().get(table_size - 1);
-
-            RadioButton radio = (RadioButton) ((AnchorPane)titledPane.getContent()).getChildren().get(0);
-            radio.setSelected(true);
-            semestersAccordion.setExpandedPane(titledPane);
-            setCurrentSemester();
-        }
-    }
-
-    @FXML
-    public void setCurrentSemester() {
-        String name = semestersAccordion.getExpandedPane().getText();
-        currentIndex = semestersAccordion.getPanes().indexOf(semestersAccordion.getExpandedPane());
-
-        // alter database
-        try {
-            Statement statement = Main.gradebookDB.createStatement();
-            String all_false = "UPDATE Semesters SET current_home=0;";
-            String set_current = "UPDATE Semesters SET current_home=1 WHERE name=\"" + name + "\";";
-            statement.executeUpdate(all_false);
-            statement.executeUpdate(set_current);
         } catch (Exception e) {
             System.out.println(e);
         }

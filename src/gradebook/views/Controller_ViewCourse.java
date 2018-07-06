@@ -5,6 +5,7 @@ import gradebook.Course;
 import gradebook.Grade;
 import gradebook.Main;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -22,6 +23,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
+import javax.swing.plaf.nimbus.State;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -32,6 +34,7 @@ import static gradebook.views.Controller_Semesters.clickedCourse;
 
 public class Controller_ViewCourse {
     @FXML private Label viewLabel;
+    @FXML private Label emptyLabel;
     @FXML private TextField prefix;
     @FXML private TextField number;
     @FXML private TextField description;
@@ -42,15 +45,11 @@ public class Controller_ViewCourse {
     @FXML private TitledPane firstCategory;
 
     /********************************************
-     *                                          *
-     * Add label when categories table is empty *
      * Add initialization and template          *
-     *                                          *
      *******************************************/
 
-
-
     public void initialize() {
+        categoryAccordion.getPanes().remove(firstCategory);
         prefix.setText(clickedCourse.prefix);
         number.setText(Integer.toString(clickedCourse.number));
         description.setText(clickedCourse.description);
@@ -58,20 +57,110 @@ public class Controller_ViewCourse {
 
         points.setText("0");
         letter_grade.setText(clickedCourse.letter_grade);
+
+        // initialize categories
+
+        // if accordion is empty
+        int accordionSize = categoryAccordion.getPanes().size();
+        categoryAccordion.visibleProperty().bind(new SimpleBooleanProperty(accordionSize > 0));
+        emptyLabel.visibleProperty().bind(new SimpleBooleanProperty(accordionSize == 0));
     }
 
-    // Helpers ----------------------------------------------
-    // make popup, get info, and return as Category
+    // Controls ---------------------------------------------
+    @FXML
+    private void addCategory() {
+        // popup for category, return popup with result
+        Dialog<Pair<String, Integer>> popup = categoryPopup();
+        Optional<Pair<String, Integer>> result = popup.showAndWait();
+
+        result.ifPresent(nameWeight -> {
+            // get results
+            final String name = nameWeight.getKey();
+            final Integer weight = nameWeight.getValue();
+            Category category = new Category(name, weight);
+
+            // add to category then to accordion
+            insertCategory(category);
+            TitledPane newCategory = newCategory(category);
+            categoryAccordion.getPanes().addAll(newCategory);
+            categoryAccordion.setExpandedPane(newCategory);
+
+            // show accordion
+            int accordionSize = categoryAccordion.getPanes().size();
+            categoryAccordion.visibleProperty().bind(new SimpleBooleanProperty(accordionSize > 0));
+            emptyLabel.visibleProperty().bind(new SimpleBooleanProperty(accordionSize == 0));
+        });
+    }
+
+    @FXML
+    private void deleteCategory() {
+        String name = categoryAccordion.getExpandedPane().getText();
+
+        Alert warn = new Alert(Alert.AlertType.CONFIRMATION);
+        warn.setTitle("Are you sure?");
+        warn.setHeaderText(null);
+        warn.setContentText("Are you sure you would like to delete this semester?\n" +
+                "This will delete all grades, courses, and other information.");
+
+        Optional<ButtonType> result = warn.showAndWait();
+
+        if (result.get() == ButtonType.OK) {
+            // remove from database
+            try {
+                Statement statement = Main.gradebookDB.createStatement();
+                String sql = "DELETE FROM Course_Categories " +
+                        "WHERE name=\"" + name + "\" AND id_course=" + getCourseID() + ";";
+                statement.executeUpdate(sql);
+
+                // remove from accordion
+                categoryAccordion.getPanes().remove(categoryAccordion.getExpandedPane());
+
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+
+            // if accordion is empty
+            int accordionSize = categoryAccordion.getPanes().size();
+            categoryAccordion.visibleProperty().bind(new SimpleBooleanProperty(accordionSize > 0));
+            emptyLabel.visibleProperty().bind(new SimpleBooleanProperty(accordionSize == 0));
+        }
+    }
+
+    @FXML
+    private void addGrade() {
+        int courseID = getCategoryID(categoryAccordion.getExpandedPane().getText());
+
+    }
+
+    @FXML
+    private void submitChanges() {
+        // save course info
+        try {
+            Statement statement = Main.gradebookDB.createStatement();
+            String sql = "UPDATE Courses " +
+                    "SET prefix=\"" + prefix.getText() + "\", " +
+                    "number=" + Integer.parseInt(number.getText()) + ", " +
+                    "description=\"" + description.getText() + "\", " +
+                    "credit_hours=" + Integer.parseInt(credit_hours.getText()) + " " +
+                    "WHERE id=" + Integer.toString(getCourseID()) + ";";
+            statement.executeUpdate(sql);
+
+            goBack();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+    // ------------------------------------------------------
+
+
+    // Helpers -------------------------------------------------------------
+    // make popup, get info, and return as Dialog
     private Dialog<Pair<String, Integer>> categoryPopup() {
 
         // make popup
         Dialog<Pair<String, Integer>> popup = new Dialog<>();
         popup.setTitle("Add Category");
         popup.setHeaderText("Enter name and weight of the new category below...");
-        popup.setContentText("Name: ");
-        popup.showAndWait();
-
-
 
         // make pane
         GridPane grid = new GridPane();
@@ -88,8 +177,7 @@ public class Controller_ViewCourse {
         grid.add(name_field, 1, 0);
         grid.add(new Label("Weight:"), 0, 1);
         grid.add(weight_field, 1, 1);
-
-
+        popup.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
         // set content and format results
         popup.getDialogPane().setContent(grid);
@@ -112,7 +200,7 @@ public class Controller_ViewCourse {
             statement = Main.gradebookDB.createStatement();
             String sql = "INSERT INTO Course_Categories (id, id_course, name, weight) " +
                     "VALUES (" + Integer.toString(getCategoryID()) + ", " + Integer.toString(getCourseID()) +
-                    ", " + category.name +"\", " + Integer.toString(category.weight) + ");";
+                    ", \"" + category.name +"\", " + Integer.toString(category.weight) + ");";
             statement.executeUpdate(sql);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -131,8 +219,9 @@ public class Controller_ViewCourse {
             rs = statement.executeQuery(sql);
 
             if (!rs.isClosed()) {
-                rs.last();
-                id = rs.getInt("id") + 1;
+                while (rs.next()) {
+                    id = rs.getInt("id") + 1;
+                }
             } else {
                 id = 1;
             }
@@ -143,8 +232,46 @@ public class Controller_ViewCourse {
         return id;
     }
 
+    // get category ID for addGrade
+    private int getCategoryID(String name) {
+        int id = -1;
+
+        try {
+            Statement statement = Main.gradebookDB.createStatement();
+            String sql = "SELECT id, name FROM Course_Categories " +
+                    "WHERE name=\"" + name + "\" AND id_course=" + getCourseID() + ";";
+            ResultSet rs = statement.executeQuery(sql);
+
+            if (rs.next()) {
+                id = rs.getInt("id");
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return id;
+    }
+
     private int getCourseID() {
-        return Controller_Semesters.viewCourseID;
+        int id = -1;
+
+        try {
+            Statement statement = Main.gradebookDB.createStatement();
+            String sql = "SELECT id, prefix, number " +
+                    "FROM Courses " +
+                    "WHERE prefix=\"" + clickedCourse.prefix + "\" AND number=" + clickedCourse.number + ";";
+            ResultSet rs = statement.executeQuery(sql);
+
+            if (rs.next()) {
+                id = rs.getInt("id");
+            } else {
+                id = 1;
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return id;
     }
 
     // template for Categories (TitledPane)
@@ -234,8 +361,8 @@ public class Controller_ViewCourse {
         // get grades for category id
         try {
             Statement statement = Main.gradebookDB.createStatement();
-            String sql = "SELECT * FROM Course_Categories WHERE name=" + categoryName +
-                    " AND id_course=" + getCourseID() + ";";
+            String sql = "SELECT * FROM Course_Categories " +
+                    "WHERE name=\"" + categoryName + "\" AND id_course=" + getCourseID() + ";";
             rs = statement.executeQuery(sql);
 
             Category c = new Category();
@@ -248,68 +375,7 @@ public class Controller_ViewCourse {
         return grades;
     }
 
-    // ------------------------------------------------------
-
-
-    // Controls ---------------------------------------------
-    @FXML
-    private void addCategory() {
-        // popup for category, return popup with result
-        Dialog<Pair<String, Integer>> popup = categoryPopup();
-        Optional<Pair<String, Integer>> result = popup.showAndWait();
-
-        result.ifPresent(nameWeight -> {
-            // get results
-            final String name = nameWeight.getKey();
-            final Integer weight = nameWeight.getValue();
-            Category category = new Category(name, weight);
-
-            // add to category then to accordion
-            insertCategory(category);
-            TitledPane newCategory = newCategory(category);
-            categoryAccordion.getPanes().addAll(newCategory);
-            categoryAccordion.setExpandedPane(newCategory);
-        });
-    }
-
-    @FXML
-    private void submitChanges() {
-
-
-        // finished... return to previous page
-        try {
-            goBack();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    }
-
-    @FXML
-    private void deleteCategory() {
-        String name = categoryAccordion.getExpandedPane().getText();
-
-        /************************
-         * Fix SQL statement    *
-         ***********************/
-
-        // remove from database
-        try {
-            Statement statement = Main.gradebookDB.createStatement();
-            String sql = "DELETE FROM Course_Categories WHERE ;";
-
-            // remove from accordion
-            categoryAccordion.getPanes().remove(categoryAccordion.getExpandedPane());
-
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    }
-
-    @FXML
-    private void addGrade() {
-
-    }
-    // ------------------------------------------------------
+    // ---------------------------------------------------------------------
 
 
     // Navigation -------------------------------------------

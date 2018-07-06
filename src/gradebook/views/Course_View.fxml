@@ -53,7 +53,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <TextField fx:id="prefix" layoutX="100.0" prefHeight="25.0" prefWidth="50.0" />
+                              <TextField fx:id="prefix" layoutX="100.0" prefHeight="25.0" prefWidth="55.0" />
                            </children>
                         </Group>
                         <Group layoutY="40.0">
@@ -63,7 +63,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <TextField fx:id="number" layoutX="100.0" prefHeight="25.0" prefWidth="50.0" />
+                              <TextField fx:id="number" layoutX="100.0" prefHeight="25.0" prefWidth="55.0" />
                            </children>
                         </Group>
                         <Group layoutY="80.0">
@@ -117,6 +117,11 @@
                   <Separator layoutX="383.0" layoutY="75.0" orientation="VERTICAL" prefHeight="200.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="383.0" AnchorPane.topAnchor="75.0" />
                   <AnchorPane layoutX="403.0" layoutY="83.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="481.0" prefWidth="465.0" AnchorPane.bottomAnchor="34.0" AnchorPane.leftAnchor="403.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="83.0">
                      <children>
+                        <Label fx:id="emptyLabel" alignment="CENTER" layoutX="51.0" layoutY="9.0" prefHeight="368.0" prefWidth="365.0" text="No categories to display..." visible="false" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
                         <Accordion fx:id="categoryAccordion" layoutY="7.0" prefHeight="383.0" prefWidth="465.0" AnchorPane.bottomAnchor="98.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <panes>
                             <TitledPane fx:id="firstCategory" prefWidth="465.0" text="Category">
