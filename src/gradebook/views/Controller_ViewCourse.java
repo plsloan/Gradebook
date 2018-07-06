@@ -37,6 +37,7 @@ public class Controller_ViewCourse {
     @FXML private Label emptyLabel;
     @FXML private TextField prefix;
     @FXML private TextField number;
+    @FXML private TextField section;
     @FXML private TextField description;
     @FXML private TextField credit_hours;
     @FXML private TextField points;
@@ -52,6 +53,7 @@ public class Controller_ViewCourse {
         categoryAccordion.getPanes().remove(firstCategory);
         prefix.setText(clickedCourse.prefix);
         number.setText(Integer.toString(clickedCourse.number));
+        section.setText(clickedCourse.section);
         description.setText(clickedCourse.description);
         credit_hours.setText(Integer.toString(clickedCourse.credit_hours));
 
@@ -140,6 +142,7 @@ public class Controller_ViewCourse {
             String sql = "UPDATE Courses " +
                     "SET prefix=\"" + prefix.getText() + "\", " +
                     "number=" + Integer.parseInt(number.getText()) + ", " +
+                    "section=\"" + section.getText() + "\", " +
                     "description=\"" + description.getText() + "\", " +
                     "credit_hours=" + Integer.parseInt(credit_hours.getText()) + " " +
                     "WHERE id=" + Integer.toString(getCourseID()) + ";";

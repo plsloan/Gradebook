@@ -42,12 +42,12 @@
                         <Font size="20.0" />
                      </font>
                   </Label>
-                  <Label fx:id="emptyLabel" alignment="CENTER" layoutX="296.0" layoutY="92.0" prefHeight="432.0" prefWidth="798.0" text="There are currently no semesters available..." AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="77.0">
+                  <Label fx:id="emptyLabel" alignment="CENTER" layoutX="296.0" layoutY="92.0" prefHeight="432.0" prefWidth="798.0" text="There are currently no semesters available..." visible="false" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="77.0">
                      <font>
                         <Font size="16.0" />
                      </font>
                   </Label>
-                  <Accordion fx:id="semestersAccordion" layoutX="50.0" layoutY="77.0" prefHeight="406.0" prefWidth="798.0" visible="false" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="80.0">
+                  <Accordion fx:id="semestersAccordion" layoutX="50.0" layoutY="77.0" prefHeight="406.0" prefWidth="798.0" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="80.0">
                     <panes>
                       <TitledPane fx:id="firstSemester" expanded="false" text="Name">
                         <content>
@@ -61,6 +61,7 @@
                                        <columns>
                                           <TableColumn minWidth="63.0" resizable="false" text="Prefix" />
                                           <TableColumn minWidth="45.33331298828125" resizable="false" text="Number" />
+                                          <TableColumn minWidth="45.33331298828125" resizable="false" text="Section" />
                                           <TableColumn minWidth="24.6666259765625" prefWidth="190.0" text="Description" />
                                           <TableColumn minWidth="24.0" prefWidth="86.33331298828125" resizable="false" text="Grade" />
                                           <TableColumn maxWidth="112.0" minWidth="-1.0" prefWidth="98.33331298828125" resizable="false" text="Credit Hours" />

@@ -27,6 +27,7 @@ public class Controller_AddCourse {
     @FXML private Button submitCourseBtn;
     @FXML private TextField prefix;
     @FXML private TextField number;
+    @FXML private TextField section;
     @FXML private TextField description;
     @FXML private TextField credit_hours;
     @FXML private TextField name_field;
@@ -58,6 +59,74 @@ public class Controller_AddCourse {
                     new SimpleIntegerProperty(p.getValue().weight).asObject());
         }
     }
+
+
+    // Controls ---------------------------------------------------
+    @FXML
+    private void addCategory() {
+        // create and add category
+        Category category = new Category(name_field.getText(), Integer.parseInt(weight_field.getText()));
+        categories.addAll(category);
+
+        // add to database
+        try {
+            Statement statement = Main.gradebookDB.createStatement();
+
+            // get data
+            int id = getCategoryId();
+            id_course = getCourseID();
+            String sql_insertCategory = "INSERT INTO Course_Categories (id, id_course, name, weight) " +
+                    "VALUES (" + Integer.toString(id) + ", " + Integer.toString(id_course) + ", \"" + category.name +
+                    "\", " + Integer.toString(category.weight) + ")";
+
+            statement.execute(sql_insertCategory);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+
+        // reset fields
+        name_field.setText("");
+        weight_field.setText("");
+    }
+
+    @FXML
+    private void submitCourse() {
+        // create course
+        Course course = new Course();
+
+        // add data
+        course.add(0, prefix.getText());
+        course.add(1, Integer.parseInt(number.getText()));
+        course.add(2, section.getText());
+        course.add(3, description.getText());
+        course.add(6, Integer.parseInt(credit_hours.getText()));
+        course.add(categories);
+
+        // get semester id
+        id_semester = getSemesterID();
+        id_course = getCourseID();
+
+        // sql statement
+        try {
+            Statement statement = Main.gradebookDB.createStatement();
+            String sql_insertCourse = "INSERT INTO Courses (id, id_semester, prefix, number, section, description, credit_hours) " +
+                    "VALUES (" + Integer.toString(id_course) + ", " + Integer.toString(id_semester) + ", \"" + course.prefix + "\", " +
+                    Integer.toString(course.number) + ", \"" + course.section + "\", \"" + course.description + "\", " +
+                    Integer.toString(course.credit_hours) + ");";
+            statement.execute(sql_insertCourse);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        try {
+            goBack();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+    // ------------------------------------------------------------
+
 
     // Helpers ----------------------------------------------------
     private int getCategoryId() {
@@ -127,72 +196,6 @@ public class Controller_AddCourse {
         }
 
         return id;
-    }
-    // ------------------------------------------------------------
-
-
-    // Controls ---------------------------------------------------
-    @FXML
-    private void addCategory() {
-        // create and add category
-        Category category = new Category(name_field.getText(), Integer.parseInt(weight_field.getText()));
-        categories.addAll(category);
-
-        // add to database
-        try {
-            Statement statement = Main.gradebookDB.createStatement();
-
-            // get data
-            int id = getCategoryId();
-            id_course = getCourseID();
-            String sql_insertCategory = "INSERT INTO Course_Categories (id, id_course, name, weight) " +
-                    "VALUES (" + Integer.toString(id) + ", " + Integer.toString(id_course) + ", \"" + category.name +
-                    "\", " + Integer.toString(category.weight) + ")";
-
-            statement.execute(sql_insertCategory);
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-
-
-        // reset fields
-        name_field.setText("");
-        weight_field.setText("");
-    }
-
-    @FXML
-    private void submitCourse() {
-        // create course
-        Course course = new Course();
-
-        // add data
-        course.add(0, prefix.getText());
-        course.add(1, Integer.parseInt(number.getText()));
-        course.add(2, description.getText());
-        course.add(5, Integer.parseInt(credit_hours.getText()));
-        course.add(categories);
-
-        // get semester id
-        id_semester = getSemesterID();
-        id_course = getCourseID();
-
-        // sql statement
-        try {
-            Statement statement = Main.gradebookDB.createStatement();
-            String sql_insertCourse = "INSERT INTO Courses (id, id_semester, prefix, number, description, credit_hours) " +
-                    "VALUES (" + Integer.toString(id_course) + ", " + Integer.toString(id_semester) + ", \"" + course.prefix + "\", " +
-                    Integer.toString(course.number) + ", \"" + course.description + "\", " +
-                    Integer.toString(course.credit_hours) + ");";
-            statement.execute(sql_insertCourse);
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-
-        try {
-            goBack();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
     }
     // ------------------------------------------------------------
 

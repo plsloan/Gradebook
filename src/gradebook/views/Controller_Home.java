@@ -31,6 +31,7 @@ public class Controller_Home {
     @FXML private TableView<Course> homeTable;
     @FXML private TableColumn<Course, String> prefix;
     @FXML private TableColumn<Course, Integer> number;
+    @FXML private TableColumn<Course, String> section;
     @FXML private TableColumn<Course, String> description;
     @FXML private TableColumn<Course, String> grade;
     @FXML private TableColumn<Course, Integer> ch;
@@ -75,7 +76,7 @@ public class Controller_Home {
             int index = getCurrentIndex();
 
             Statement statement = Main.gradebookDB.createStatement();
-            String sql_getRecentTable = "SELECT id_semester, prefix, number, description, received_points, possible_points, " +
+            String sql_getRecentTable = "SELECT id_semester, prefix, number, section, description, received_points, possible_points, " +
                     "credit_hours FROM Courses WHERE id_semester=" + Integer.toString(index) + ";";
             ResultSet rs = statement.executeQuery(sql_getRecentTable);
 
@@ -105,6 +106,7 @@ public class Controller_Home {
                 data.addAll(new Course(
                         rs.getString("prefix"),
                         rs.getInt("number"),
+                        rs.getString("section"),
                         rs.getString("description"),
                         letter_grade,
                         rs.getInt("credit_hours")
@@ -117,6 +119,8 @@ public class Controller_Home {
                     new SimpleStringProperty(p.getValue().prefix));
             number.setCellValueFactory((TableColumn.CellDataFeatures<Course, Integer> p) ->
                     new SimpleIntegerProperty(p.getValue().number).asObject());
+            section.setCellValueFactory((TableColumn.CellDataFeatures<Course, String> p) ->
+                    new SimpleStringProperty(p.getValue().section));
             description.setCellValueFactory((TableColumn.CellDataFeatures<Course, String> p) ->
                     new SimpleStringProperty(p.getValue().description));
             grade.setCellValueFactory((TableColumn.CellDataFeatures<Course, String> p) ->

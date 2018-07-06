@@ -45,6 +45,7 @@
                     <columns>
                       <TableColumn fx:id="prefix" minWidth="63.0" resizable="false" text="Prefix" />
                         <TableColumn fx:id="number" minWidth="45.33331298828125" resizable="false" text="Number" />
+                        <TableColumn fx:id="section" minWidth="45.33331298828125" resizable="false" text="Section" />
                         <TableColumn fx:id="description" minWidth="24.6666259765625" prefWidth="190.0" text="Description" />
                       <TableColumn fx:id="grade" editable="false" minWidth="24.0" prefWidth="86.33331298828125" resizable="false" text="Grade" />
                         <TableColumn fx:id="ch" maxWidth="112.0" minWidth="-1.0" prefWidth="98.33331298828125" resizable="false" text="Credit Hours" />

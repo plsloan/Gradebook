@@ -95,7 +95,6 @@ public class Controller_Semesters {
 
 //      if input was given
         if (popupTitle != null && !popupTitle.equals("")) {
-
             try {
                 if (table_size == 0) {
                     semestersAccordion.setVisible(true);
@@ -110,7 +109,8 @@ public class Controller_Semesters {
                 // if table_size is 1, set as current semester
                 if (table_size == 1) {
                     currentSemesterToggle.selectToggle(
-                            ((RadioButton)((AnchorPane)(semestersAccordion.getExpandedPane().getContent())).getChildren().get(0))
+                            ((RadioButton)((AnchorPane)(semestersAccordion.getExpandedPane().getContent()))
+                                    .getChildren().get(0))
                     );
 
                     setCurrentSemester();
@@ -335,6 +335,10 @@ public class Controller_Semesters {
         number.setCellValueFactory((TableColumn.CellDataFeatures<Course, Integer> p) ->
                 new SimpleIntegerProperty(p.getValue().number).asObject());
 
+        TableColumn<Course, String> section = new TableColumn<>("Section");
+        section.setCellValueFactory((TableColumn.CellDataFeatures<Course, String> p) ->
+                new SimpleStringProperty(p.getValue().section));
+
         TableColumn<Course, String> description = new TableColumn<>("Description");
         description.setCellValueFactory((TableColumn.CellDataFeatures<Course, String> p) ->
                 new SimpleStringProperty(p.getValue().description));
@@ -348,7 +352,7 @@ public class Controller_Semesters {
                 new SimpleIntegerProperty(p.getValue().credit_hours).asObject());
 
 
-        tv.getColumns().addAll(prefix, number, description, grade, credit_hours);
+        tv.getColumns().addAll(prefix, number, section, description, grade, credit_hours);
         tv.setOnMousePressed(new EventHandler<>() {
             @Override
             public void handle(MouseEvent click) {
@@ -417,7 +421,7 @@ public class Controller_Semesters {
 
         // create sql statement
         Statement statement = Main.gradebookDB.createStatement();
-        String sql = "SELECT prefix, number, description, received_points, possible_points, credit_hours " +
+        String sql = "SELECT prefix, number, section, description, received_points, possible_points, credit_hours " +
                 "FROM courses JOIN semesters ON courses.id_semester = semesters.id " +
                 "WHERE courses.id_semester = " + Integer.toString(id) + ";";
         rs = statement.executeQuery(sql);
@@ -426,12 +430,14 @@ public class Controller_Semesters {
         int received = 0, possible = 0;
         while(rs.next()) {
             Course c = new Course();
-            for (int i = 0; i < 6; i++) {
-                if (i == 0 || i == 2) {         // if prefix or description (strings)
+            for (int i = 0; i < 7; i++) {
+                if (i == 0 || i == 3) {         // if prefix or description (strings)
                     c.add(i, rs.getString(i+1));
-                } else if (i == 3) {             // if received_points
+                } else if (i == 2) {            // if section
+                    c.add(i, rs.getString(i+1));
+                } else if (i == 4) {            // if received_points
                     received = rs.getInt(i+1);    // \too be calculated\
-                } else if (i == 4) {            // if possible_points
+                } else if (i == 5) {            // if possible_points
                     possible = rs.getInt(i+1);
                 } else {                        // if number or credit_hours (int)
                     c.add(i, rs.getInt(i+1));
@@ -440,17 +446,17 @@ public class Controller_Semesters {
 
             // get the letter grade
             if ((possible - received) <= 100) {
-                c.add(3, "A");
+                c.add(4, "A");
             } else if ((possible - received) <= 200) {
-                c.add(3, "B");
+                c.add(4, "B");
             } else if ((possible - received) <= 300) {
-                c.add(3, "C");
+                c.add(4, "C");
             } else if ((possible - received) <= 400) {
-                c.add(3, "D");
+                c.add(4, "D");
             } else if (received == 0 && possible == 1000) {
-                c.add(3, "N/A");
+                c.add(4, "N/A");
             } else {
-                c.add(3, "F");
+                c.add(4, "F");
             }
             courses.addAll(c);
         }
