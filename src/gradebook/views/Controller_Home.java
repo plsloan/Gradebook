@@ -7,11 +7,13 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -114,6 +116,20 @@ public class Controller_Home {
             }
 
             homeTable.setItems(data);
+            homeTable.setOnMousePressed(new EventHandler<>() {
+                @Override
+                public void handle(MouseEvent click) {
+                    if (click.isPrimaryButtonDown() && click.getClickCount() == 2) {
+                        clickedCourse = homeTable.getSelectionModel().getSelectedItem();
+
+                        try {
+                            goToViewCourse();
+                        } catch (Exception e) {
+                            System.out.println(e);
+                        }
+                    }
+                }
+            });
 
             prefix.setCellValueFactory((TableColumn.CellDataFeatures<Course, String> p) ->
                     new SimpleStringProperty(p.getValue().prefix));
@@ -216,24 +232,24 @@ public class Controller_Home {
         return index;
     }
 
-    private int getCurrentIndex(int index) {
-        try {
-            Statement statement = Main.gradebookDB.createStatement();
-            String sql = "SELECT * FROM Semesters;";
-            ResultSet rs = statement.executeQuery(sql);
-
-            for (int i = 0; i < index; i++) {
-                rs.next();
-            }
-
-            return rs.getInt("id");
-
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-
-        return -1;
-    }
+//    private int getCurrentIndex(int index) {
+//        try {
+//            Statement statement = Main.gradebookDB.createStatement();
+//            String sql = "SELECT * FROM Semesters;";
+//            ResultSet rs = statement.executeQuery(sql);
+//
+//            for (int i = 0; i < index; i++) {
+//                rs.next();
+//            }
+//
+//            return rs.getInt("id");
+//
+//        } catch (Exception e) {
+//            System.out.println(e);
+//        }
+//
+//        return -1;
+//    }
     // -------------------------------------------------------------
 
 
@@ -275,6 +291,19 @@ public class Controller_Home {
         window.show();
 
         titles.add("Add Course");
+    }
+
+    @FXML
+    private void goToViewCourse() throws IOException {
+        Parent viewCourseParent = FXMLLoader.load(getClass().getResource("Course_View.fxml"));
+        Scene viewCourse = new Scene(viewCourseParent);
+
+        Stage window = (Stage) semesterBtn.getScene().getWindow();
+        window.setScene(viewCourse);
+        window.setTitle(clickedCourse.description);
+        window.show();
+
+        Controller_Home.titles.add("View Course");
     }
 
     @FXML
