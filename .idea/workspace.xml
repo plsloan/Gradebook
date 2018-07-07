@@ -10,12 +10,11 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gradebook.db" beforeDir="false" afterPath="$PROJECT_DIR$/gradebook.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/artifacts/Gradebook_jar/Gradebook.jar" beforeDir="false" afterPath="$PROJECT_DIR$/out/artifacts/Gradebook_jar/Gradebook.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/artifacts/Gradebook_jar/gradebook.db" beforeDir="false" afterPath="$PROJECT_DIR$/out/artifacts/Gradebook_jar/gradebook.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/artifacts/Gradebook_jar/gradebook.db" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/Gradebook/gradebook/views/Controller_ViewCourse$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Gradebook/gradebook/views/Controller_ViewCourse$1.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/Gradebook/gradebook/views/Controller_ViewCourse$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Gradebook/gradebook/views/Controller_ViewCourse$2.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/Gradebook/gradebook/views/Controller_ViewCourse.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Gradebook/gradebook/views/Controller_ViewCourse.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/gradebook/views/Controller_ViewCourse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gradebook/views/Controller_ViewCourse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gradebook/views/Course_View.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/gradebook/views/Course_View.fxml" afterDir="false" />
     </list>
     <ignored path="JavaFxApplication.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -81,11 +80,13 @@
       <file leaf-file-name="Controller_ViewCourse.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/gradebook/views/Controller_ViewCourse.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="159">
-              <caret line="139" column="103" lean-forward="true" selection-start-line="139" selection-start-column="103" selection-end-line="139" selection-end-column="103" />
+            <state relative-caret-position="118">
+              <caret line="112" column="63" lean-forward="true" selection-start-line="112" selection-start-column="63" selection-end-line="112" selection-end-column="63" />
               <folding>
+                <element signature="method#initialize#0;class#Controller_ViewCourse#0" />
                 <element signature="method#addCategory#0;class#Controller_ViewCourse#0" />
-                <element signature="method#deleteCategory#0;class#Controller_ViewCourse#0" />
+                <element signature="method#addGrade#0;class#Controller_ViewCourse#0" />
+                <element signature="method#deleteGrade#0;class#Controller_ViewCourse#0" />
                 <element signature="method#submitChanges#0;class#Controller_ViewCourse#0" />
                 <element signature="method#categoryPopup#0;class#Controller_ViewCourse#0" />
                 <element signature="method#insertCategory#0;class#Controller_ViewCourse#0" />
@@ -93,9 +94,13 @@
                 <element signature="method#getCategoryID#0;class#Controller_ViewCourse#0" />
                 <element signature="method#getNewCategoryID#0;class#Controller_ViewCourse#0" />
                 <element signature="method#getNewGradeID#0;class#Controller_ViewCourse#0" />
-                <element signature="e#14164#14361#0" />
-                <element signature="e#15089#15979#0" />
+                <element signature="method#newCategory#0;class#Controller_ViewCourse#0" />
+                <element signature="method#getGrades#0;class#Controller_ViewCourse#0" />
+                <element signature="method#addCoursePoints#0;class#Controller_ViewCourse#0" />
+                <element signature="method#removeCoursePoints#0;class#Controller_ViewCourse#0" />
                 <element signature="method#initializeAccordion#0;class#Controller_ViewCourse#0" />
+                <element signature="method#initializeGrades#0;class#Controller_ViewCourse#0" />
+                <element signature="method#getPoints#0;class#Controller_ViewCourse#0" />
                 <element signature="method#goToHome#0;class#Controller_ViewCourse#0" />
                 <element signature="method#goToSemesters#0;class#Controller_ViewCourse#0" />
                 <element signature="method#goToGPA#0;class#Controller_ViewCourse#0" />
@@ -116,10 +121,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>insert</find>
-      <find>name</find>
-      <find>.last()</find>
-      <find>getcourses</find>
       <find>semestername</find>
       <find>getsemesterid</find>
       <find>currentindex</find>
@@ -146,6 +147,10 @@
       <find>set</find>
       <find>categorytabl</find>
       <find>addgrade</find>
+      <find>addGrade</find>
+      <find>getgrades</find>
+      <find>delete</find>
+      <find>deletecate</find>
     </findStrings>
   </component>
   <component name="FindManager">
@@ -201,9 +206,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
-      <pane id="AndroidView" />
       <pane id="Scope" />
+      <pane id="AndroidView" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -382,7 +387,7 @@
       <window_info anchor="bottom" id="Event Log" order="8" side_tool="true" />
       <window_info anchor="right" id="Maven Projects" order="4" />
       <window_info anchor="bottom" id="Version Control" order="12" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.32130584" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32130584" />
       <window_info anchor="bottom" id="Terminal" order="13" />
       <window_info id="Capture Tool" order="5" />
       <window_info id="Designer" order="2" />
@@ -392,20 +397,20 @@
       <window_info id="UI Designer" order="3" />
       <window_info anchor="right" id="Theme Preview" order="8" />
       <window_info id="Favorites" order="4" side_tool="true" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.39862543" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.39862543" />
       <window_info anchor="right" id="JetGradle" order="5" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" id="Database" order="6" />
+      <window_info anchor="bottom" id="Problems" order="7" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3298969" />
       <window_info anchor="bottom" id="Changes" order="9" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="right" id="Database" order="6" />
+      <window_info anchor="right" id="Coverage" order="9" side_tool="true" weight="0.32943013" />
       <window_info anchor="bottom" id="Profiler" order="10" />
-      <window_info anchor="bottom" id="Problems" order="7" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Application Servers" order="11" />
-      <window_info anchor="right" id="Coverage" order="9" side_tool="true" weight="0.32943013" />
     </layout>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -426,13 +431,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/gradebook/views/Controller_ViewCourse.java</url>
-          <line>118</line>
+          <line>119</line>
           <properties />
           <option name="timeStamp" value="295" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/gradebook/views/Controller_ViewCourse.java</url>
-          <line>386</line>
+          <line>391</line>
           <properties />
           <option name="timeStamp" value="312" />
         </line-breakpoint>
@@ -692,17 +697,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="115">
           <caret line="103" column="31" selection-start-line="103" selection-start-column="31" selection-end-line="103" selection-end-column="31" />
-          <folding>
-            <element signature="method#initialize#0;class#Controller_AddCourse#0" />
-            <element signature="method#addCategory#0;class#Controller_AddCourse#0" />
-            <element signature="method#getCategoryId#0;class#Controller_AddCourse#0" />
-            <element signature="method#getSemesterID#0;class#Controller_AddCourse#0" />
-            <element signature="method#getCourseID#0;class#Controller_AddCourse#0" />
-            <element signature="method#goToHome#0;class#Controller_AddCourse#0" />
-            <element signature="method#goToSemesters#0;class#Controller_AddCourse#0" />
-            <element signature="method#goToGPA#0;class#Controller_AddCourse#0" />
-            <element signature="method#goBack#0;class#Controller_AddCourse#0" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -806,11 +800,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/gradebook/views/Controller_ViewCourse.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="159">
-          <caret line="139" column="103" lean-forward="true" selection-start-line="139" selection-start-column="103" selection-end-line="139" selection-end-column="103" />
+        <state relative-caret-position="118">
+          <caret line="112" column="63" lean-forward="true" selection-start-line="112" selection-start-column="63" selection-end-line="112" selection-end-column="63" />
           <folding>
+            <element signature="method#initialize#0;class#Controller_ViewCourse#0" />
             <element signature="method#addCategory#0;class#Controller_ViewCourse#0" />
-            <element signature="method#deleteCategory#0;class#Controller_ViewCourse#0" />
+            <element signature="method#addGrade#0;class#Controller_ViewCourse#0" />
+            <element signature="method#deleteGrade#0;class#Controller_ViewCourse#0" />
             <element signature="method#submitChanges#0;class#Controller_ViewCourse#0" />
             <element signature="method#categoryPopup#0;class#Controller_ViewCourse#0" />
             <element signature="method#insertCategory#0;class#Controller_ViewCourse#0" />
@@ -818,9 +814,13 @@
             <element signature="method#getCategoryID#0;class#Controller_ViewCourse#0" />
             <element signature="method#getNewCategoryID#0;class#Controller_ViewCourse#0" />
             <element signature="method#getNewGradeID#0;class#Controller_ViewCourse#0" />
-            <element signature="e#14164#14361#0" />
-            <element signature="e#15089#15979#0" />
+            <element signature="method#newCategory#0;class#Controller_ViewCourse#0" />
+            <element signature="method#getGrades#0;class#Controller_ViewCourse#0" />
+            <element signature="method#addCoursePoints#0;class#Controller_ViewCourse#0" />
+            <element signature="method#removeCoursePoints#0;class#Controller_ViewCourse#0" />
             <element signature="method#initializeAccordion#0;class#Controller_ViewCourse#0" />
+            <element signature="method#initializeGrades#0;class#Controller_ViewCourse#0" />
+            <element signature="method#getPoints#0;class#Controller_ViewCourse#0" />
             <element signature="method#goToHome#0;class#Controller_ViewCourse#0" />
             <element signature="method#goToSemesters#0;class#Controller_ViewCourse#0" />
             <element signature="method#goToGPA#0;class#Controller_ViewCourse#0" />

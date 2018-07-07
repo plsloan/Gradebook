@@ -57,11 +57,10 @@ public class Controller_ViewCourse {
         section.setText(clickedCourse.section);
         description.setText(clickedCourse.description);
         credit_hours.setText(Integer.toString(clickedCourse.credit_hours));
-        points.setText("0");
+        points.setText(getPoints());
         letter_grade.setText(clickedCourse.letter_grade);
 
-
-        // initialize accordion
+        // initialize accordion and grade tables
         initializeAccordion();
         initializeGrades();
 
@@ -112,7 +111,9 @@ public class Controller_ViewCourse {
             try {
                 Statement statement = Main.gradebookDB.createStatement();
                 String sql = "DELETE FROM Course_Categories " +
-                        "WHERE name=\"" + name + "\" AND id_course=" + getCourseID() + ";";
+                        "WHERE name=\"" + name + "\" AND id_course=" + getCourseID() + ";\n" +
+                        "DELETE FROM Grades " +
+                        "WHERE id_category=" + getCategoryID(name) + ";";
                 statement.executeUpdate(sql);
 
                 // remove from accordion
@@ -147,6 +148,10 @@ public class Controller_ViewCourse {
         } catch (Exception e) {
             System.out.println(e);
         }
+    }
+
+    private void deleteGrade() {
+
     }
 
     @FXML
@@ -482,6 +487,15 @@ public class Controller_ViewCourse {
 
         return grades;
     }
+
+    // add points to current courses received total
+    private void addCoursePoints() {
+
+    }
+
+    private void removeCoursePoints() {
+
+    }
     // ---------------------------------------------------------------------
 
 
@@ -515,6 +529,23 @@ public class Controller_ViewCourse {
             gradeTableView.setItems(getGrades(name));
             gradeTableView.refresh();
         }
+    }
+
+    private String getPoints() {
+        String points = "N/A";
+        try {
+            Statement statement = Main.gradebookDB.createStatement();
+            String sql = "SELECT id, received_points FROM Courses WHERE id=" + getCourseID() + ";";
+            ResultSet rs = statement.executeQuery(sql);
+
+            if (rs.next()) {
+                points = Integer.toString(rs.getInt("received_points"));
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return points;
     }
     // ---------------------------------------------------------------------
 
