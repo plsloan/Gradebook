@@ -13,9 +13,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
+import javax.swing.plaf.nimbus.State;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -51,7 +54,7 @@ public class Controller_Home {
     }
 
     // Helpers -----------------------------------------------------
-    // initialize currentIndex
+    // initialization
     private void initializeCurrentIndex() {
         int index = 0;
         try {
@@ -71,7 +74,6 @@ public class Controller_Home {
             System.out.println(e);
         }
     }
-
     private void getCurrentTable() {
         try {
             ObservableList<Course> data = FXCollections.observableArrayList();
@@ -130,6 +132,24 @@ public class Controller_Home {
                     }
                 }
             });
+            homeTable.setOnKeyPressed( new EventHandler<KeyEvent>() {
+                @Override
+                public void handle(final KeyEvent keyEvent)
+                {
+                    final Course selectedCourse = homeTable.getSelectionModel().getSelectedItem();
+
+                    if (selectedCourse != null)
+                    {
+                        if (keyEvent.getCode().equals(KeyCode.DELETE))
+                        {
+                            int idCourse = deleteCourse(selectedCourse);
+                            ArrayList<Integer> idsCategories = deleteCategory(idCourse);
+                            deleteGrade(idsCategories);
+                            homeTable.getItems().remove(selectedCourse);
+                        }
+                    }
+                }
+            } );
 
             prefix.setCellValueFactory((TableColumn.CellDataFeatures<Course, String> p) ->
                     new SimpleStringProperty(p.getValue().prefix));
@@ -148,7 +168,6 @@ public class Controller_Home {
             System.out.println(e);
         }
     }
-
     private void setCurrentGPA() {
         try {
             String gpa;
@@ -170,7 +189,6 @@ public class Controller_Home {
             System.out.println(e);
         }
     }
-
     private void setOverallGPA() {
         double quality_points = 0;
         double credits = 0.0;
@@ -209,6 +227,59 @@ public class Controller_Home {
         }
     }
 
+    // used to delete Course, Categories, and Grades with delete keystroke
+    private int deleteCourse(Course course) {
+        int id = -1;
+        ResultSet rs;
+
+        try {
+            Statement statement = Main.gradebookDB.createStatement();
+            String sql = "SELECT id FROM Courses WHERE prefix=\"" + course.prefix + "\" AND number=" + course.number + ";";
+            rs = statement.executeQuery(sql);
+            id = rs.getInt("id");
+
+            sql = "DELETE FROM Courses WHERE prefix=\"" + course.prefix + "\" AND number=" + course.number + ";";
+            statement.executeUpdate(sql);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return id;
+    }
+    private ArrayList<Integer> deleteCategory(int idCourse) {
+        ArrayList<Integer> IDs = null;
+
+        try {
+            Statement statement = Main.gradebookDB.createStatement();
+            String sql = "SELECT id FROM Course_Categories WHERE id_course=" + idCourse + ";";
+            ResultSet rs = statement.executeQuery(sql);
+
+            IDs = new ArrayList<>();
+            while (rs.next()) {
+                IDs.add(rs.getInt("id"));
+            }
+
+            sql = "DELETE FROM Course_Categories WHERE id_course=" + idCourse + ";";
+            statement.executeUpdate(sql);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return IDs;
+    }
+    private void deleteGrade(ArrayList<Integer> idsCategories) {
+        try {
+            Statement statement = Main.gradebookDB.createStatement();
+            for (int i = 0; i < idsCategories.size(); i++) {
+                String sql = "DELETE FROM Grades WHERE id_category=" + idsCategories.get(i) + ";";
+                statement.executeUpdate(sql);
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    // used in getCurrentTable()
     private int getCurrentIndex() {
         int s = -1;
         int index = -1;
@@ -231,31 +302,11 @@ public class Controller_Home {
 
         return index;
     }
-
-//    private int getCurrentIndex(int index) {
-//        try {
-//            Statement statement = Main.gradebookDB.createStatement();
-//            String sql = "SELECT * FROM Semesters;";
-//            ResultSet rs = statement.executeQuery(sql);
-//
-//            for (int i = 0; i < index; i++) {
-//                rs.next();
-//            }
-//
-//            return rs.getInt("id");
-//
-//        } catch (Exception e) {
-//            System.out.println(e);
-//        }
-//
-//        return -1;
-//    }
     // -------------------------------------------------------------
 
 
     // Navigation --------------------------------------------------
-    @FXML
-    private void goToSemesters() throws IOException {
+    @FXML private void goToSemesters() throws IOException {
         Parent SemestersParent = FXMLLoader.load(getClass().getResource("Semesters.fxml"));
         Scene semesters = new Scene(SemestersParent);
 
@@ -266,9 +317,7 @@ public class Controller_Home {
 
         titles.add("Semesters");
     }
-
-    @FXML
-    private void goToGPA() throws IOException {
+    @FXML private void goToGPA() throws IOException {
         Parent gpaParent = FXMLLoader.load(getClass().getResource("GPA_Calculator.fxml"));
         Scene gpa = new Scene(gpaParent);
 
@@ -279,9 +328,7 @@ public class Controller_Home {
 
         titles.add("Calculate GPA");
     }
-
-    @FXML
-    private void goToAddCourse() throws IOException {
+    @FXML private void goToAddCourse() throws IOException {
         Parent addCourseParent = FXMLLoader.load(getClass().getResource("Course_Add.fxml"));
         Scene addCourse = new Scene(addCourseParent);
 
@@ -292,9 +339,7 @@ public class Controller_Home {
 
         titles.add("Add Course");
     }
-
-    @FXML
-    private void goToViewCourse() throws IOException {
+    @FXML private void goToViewCourse() throws IOException {
         Parent viewCourseParent = FXMLLoader.load(getClass().getResource("Course_View.fxml"));
         Scene viewCourse = new Scene(viewCourseParent);
 
@@ -305,9 +350,7 @@ public class Controller_Home {
 
         Controller_Home.titles.add("View Course");
     }
-
-    @FXML
-    private void goBack() throws IOException {
+    @FXML private void goBack() throws IOException {
         int n = Controller_Home.titles.size() - 1;
         Controller_Home.titles.remove(n);
 

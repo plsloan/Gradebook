@@ -19,6 +19,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -29,6 +31,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static gradebook.views.Controller_Semesters.clickedCourse;
@@ -45,10 +48,6 @@ public class Controller_ViewCourse {
     @FXML private TextField letter_grade;
     @FXML private Accordion categoryAccordion;
     @FXML private TitledPane firstCategory;
-
-    /********************************************
-     * Add initialization and template          *
-     *******************************************/
 
     public void initialize() {
         // initialize course info
@@ -71,8 +70,7 @@ public class Controller_ViewCourse {
     }
 
     // Controls ------------------------------------------------------------
-    @FXML
-    private void addCategory() {
+    @FXML private void addCategory() {
         // popup for category, return popup with result
         Dialog<Pair<String, Integer>> popup = categoryPopup();
         Optional<Pair<String, Integer>> result = popup.showAndWait();
@@ -93,9 +91,7 @@ public class Controller_ViewCourse {
             emptyLabel.visibleProperty().bind(new SimpleBooleanProperty(accordionSize == 0));
         });
     }
-
-    @FXML
-    private void deleteCategory() {
+    @FXML private void deleteCategory() {
         String name = categoryAccordion.getExpandedPane().getText();
 
         Alert warn = new Alert(Alert.AlertType.CONFIRMATION);
@@ -129,9 +125,7 @@ public class Controller_ViewCourse {
             emptyLabel.visibleProperty().bind(new SimpleBooleanProperty(accordionSize == 0));
         }
     }
-
-    @FXML
-    private void addGrade() {
+    @FXML private void addGrade() {
         String name = categoryAccordion.getExpandedPane().getText();
         TableView<Grade> table = (TableView<Grade>) (((AnchorPane)categoryAccordion.getExpandedPane().getContent()).getChildren().get(0));
 
@@ -149,13 +143,7 @@ public class Controller_ViewCourse {
             System.out.println(e);
         }
     }
-
-    private void deleteGrade() {
-
-    }
-
-    @FXML
-    private void submitChanges() {
+    @FXML private void submitChanges() {
         // save course info
         try {
             Statement statement = Main.gradebookDB.createStatement();
@@ -231,6 +219,7 @@ public class Controller_ViewCourse {
 
     }
 
+    // get current IDs
     private int getCourseID() {
         int id = -1;
 
@@ -252,7 +241,6 @@ public class Controller_ViewCourse {
 
         return id;
     }
-
     private int getCategoryID(String name) {
         int id = -1;
 
@@ -272,7 +260,7 @@ public class Controller_ViewCourse {
         return id;
     }
 
-    // get new ID for insertCategory
+    // get new IDs
     private int getNewCategoryID() {
         ResultSet rs;
         int id = -1;
@@ -295,7 +283,6 @@ public class Controller_ViewCourse {
 
         return id;
     }
-
     private int getNewGradeID() {
         int id = -1;
 
@@ -319,7 +306,7 @@ public class Controller_ViewCourse {
         return id;
     }
 
-    // template for Categories (TitledPane)
+    // template for Categories
     private TitledPane newCategory(Category category) {
         TitledPane template = new TitledPane();
         AnchorPane content = new AnchorPane();
@@ -439,6 +426,22 @@ public class Controller_ViewCourse {
         categoryTableView.getColumns().addAll(name, points, outOf);
         categoryTableView.setEditable(true);
         categoryTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        categoryTableView.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(final KeyEvent keyEvent) {
+                final Grade selectedGrade = categoryTableView.getSelectionModel().getSelectedItem();
+
+                if (selectedGrade != null)
+                {
+                    if (keyEvent.getCode().equals(KeyCode.DELETE))
+                    {
+                        int idCategory = getCategoryID(categoryAccordion.getExpandedPane().getText());
+                        deleteGrade(idCategory, selectedGrade.name);
+                        categoryTableView.getItems().remove(selectedGrade);
+                    }
+                }
+            }
+        } );
 
 
         // set positions
@@ -459,6 +462,18 @@ public class Controller_ViewCourse {
 
         return template;
     }
+
+    private void deleteGrade(int idCategory, String name) {
+        try {
+            Statement statement = Main.gradebookDB.createStatement();
+            String sql = "DELETE FROM Grades " +
+                    "WHERE id_category=" + idCategory + " AND name=\"" + name + "\";";
+            statement.executeUpdate(sql);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
 
     // used to get grades for newCategory() and initializing grade table
     private ObservableList<Grade> getGrades(String categoryName) {
@@ -488,11 +503,10 @@ public class Controller_ViewCourse {
         return grades;
     }
 
-    // add points to current courses received total
+    // add and remove points to current course's received total
     private void addCoursePoints() {
 
     }
-
     private void removeCoursePoints() {
 
     }
@@ -519,7 +533,6 @@ public class Controller_ViewCourse {
             System.out.println(e);
         }
     }
-
     private void initializeGrades() {
         for (int i = 0; i < categoryAccordion.getPanes().size(); i++) {
             String name = categoryAccordion.getPanes().get(i).getText();
@@ -530,7 +543,6 @@ public class Controller_ViewCourse {
             gradeTableView.refresh();
         }
     }
-
     private String getPoints() {
         String points = "N/A";
         try {
@@ -550,8 +562,7 @@ public class Controller_ViewCourse {
     // ---------------------------------------------------------------------
 
     // Navigation -------------------------------------------
-    @FXML
-    private void goToHome() throws IOException {
+    @FXML private void goToHome() throws IOException {
         Parent homeParent = FXMLLoader.load(getClass().getResource("Home.fxml"));
         Scene home = new Scene(homeParent);
 
@@ -562,9 +573,7 @@ public class Controller_ViewCourse {
 
         Controller_Home.titles.add("Home");
     }
-
-    @FXML
-    private void goToSemesters() throws IOException {
+    @FXML private void goToSemesters() throws IOException {
         Parent SemestersParent = FXMLLoader.load(getClass().getResource("Semesters.fxml"));
         Scene semesters = new Scene(SemestersParent);
 
@@ -575,9 +584,7 @@ public class Controller_ViewCourse {
 
         Controller_Home.titles.add("Semesters");
     }
-
-    @FXML
-    private void goToGPA() throws IOException {
+    @FXML private void goToGPA() throws IOException {
         Parent gpaParent = FXMLLoader.load(getClass().getResource("GPA_Calculator.fxml"));
         Scene gpa = new Scene(gpaParent);
 
@@ -588,9 +595,7 @@ public class Controller_ViewCourse {
 
         Controller_Home.titles.add("Calculate GPA");
     }
-
-    @FXML
-    private void goBack() throws IOException {
+    @FXML private void goBack() throws IOException {
         int n = Controller_Home.titles.size() - 1;
         Controller_Home.titles.remove(n);
 

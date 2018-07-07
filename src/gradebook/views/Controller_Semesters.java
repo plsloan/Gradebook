@@ -13,6 +13,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
@@ -20,6 +22,7 @@ import javafx.stage.Stage;
 import javax.swing.plaf.nimbus.State;
 import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Optional;
 
 public class Controller_Semesters {
@@ -367,7 +370,24 @@ public class Controller_Semesters {
                 }
             }
         });
+        tv.setOnKeyPressed( new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(final KeyEvent keyEvent) {
+                final Course selectedCourse = tv.getSelectionModel().getSelectedItem();
 
+                if (selectedCourse != null)
+                {
+                    if (keyEvent.getCode().equals(KeyCode.DELETE))
+                    {
+                        int idCourse = deleteCourse(selectedCourse);
+                        ArrayList<Integer> idsCategories = deleteCategory(idCourse);
+                        deleteGrade(idsCategories);
+                        tv.getItems().remove(selectedCourse);
+                    }
+                }
+            }
+        } );
+        tv.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         // --------------------------------
 
 
@@ -395,6 +415,59 @@ public class Controller_Semesters {
         template.setExpanded(true);
 
         return template;
+    }
+
+    private int deleteCourse(Course course) {
+        int id = -1;
+        ResultSet rs;
+
+        try {
+            Statement statement = Main.gradebookDB.createStatement();
+            String sql = "SELECT id FROM Courses WHERE prefix=\"" + course.prefix + "\" AND number=" + course.number + ";";
+            rs = statement.executeQuery(sql);
+            id = rs.getInt("id");
+
+            sql = "DELETE FROM Courses WHERE prefix=\"" + course.prefix + "\" AND number=" + course.number + ";";
+            statement.executeUpdate(sql);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return id;
+    }
+
+    private ArrayList<Integer> deleteCategory(int idCourse) {
+        ArrayList<Integer> IDs = null;
+
+        try {
+            Statement statement = Main.gradebookDB.createStatement();
+            String sql = "SELECT id FROM Course_Categories WHERE id_course=" + idCourse + ";";
+            ResultSet rs = statement.executeQuery(sql);
+
+            IDs = new ArrayList<>();
+            while (rs.next()) {
+                IDs.add(rs.getInt("id"));
+            }
+
+            sql = "DELETE FROM Course_Categories WHERE id_course=" + idCourse + ";";
+            statement.executeUpdate(sql);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return IDs;
+    }
+
+    private void deleteGrade(ArrayList<Integer> idsCategories) {
+        try {
+            Statement statement = Main.gradebookDB.createStatement();
+            for (int i = 0; i < idsCategories.size(); i++) {
+                String sql = "DELETE FROM Grades WHERE id_category=" + idsCategories.get(i) + ";";
+                statement.executeUpdate(sql);
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
     // help for newSemester
