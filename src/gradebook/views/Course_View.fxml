@@ -66,6 +66,16 @@
                               <TextField fx:id="number" layoutX="100.0" prefHeight="25.0" prefWidth="55.0" />
                            </children>
                         </Group>
+                        <Group layoutY="80.0">
+                           <children>
+                              <Label layoutY="2.0" text="Section:">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="section" layoutX="100.0" prefHeight="25.0" prefWidth="55.0" />
+                           </children>
+                        </Group>
                         <Group layoutY="120.0">
                            <children>
                               <Label layoutY="2.0" text="Description: ">
@@ -84,16 +94,6 @@
                                  </font>
                               </Label>
                               <TextField fx:id="credit_hours" layoutX="100.0" prefHeight="25.0" prefWidth="25.0" />
-                           </children>
-                        </Group>
-                        <Group layoutY="80.0">
-                           <children>
-                              <Label layoutY="2.0" text="Section:">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <TextField fx:id="section" layoutX="100.0" prefHeight="25.0" prefWidth="55.0" />
                            </children>
                         </Group>
                      </children>

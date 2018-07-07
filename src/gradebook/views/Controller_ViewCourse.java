@@ -18,6 +18,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -50,17 +51,19 @@ public class Controller_ViewCourse {
      *******************************************/
 
     public void initialize() {
-        categoryAccordion.getPanes().remove(firstCategory);
+        // initialize course info
         prefix.setText(clickedCourse.prefix);
         number.setText(Integer.toString(clickedCourse.number));
         section.setText(clickedCourse.section);
         description.setText(clickedCourse.description);
         credit_hours.setText(Integer.toString(clickedCourse.credit_hours));
-
         points.setText("0");
         letter_grade.setText(clickedCourse.letter_grade);
 
-        // initialize categories
+
+        // initialize accordion
+        initializeAccordion();
+        initializeGrades();
 
         // if accordion is empty
         int accordionSize = categoryAccordion.getPanes().size();
@@ -68,7 +71,7 @@ public class Controller_ViewCourse {
         emptyLabel.visibleProperty().bind(new SimpleBooleanProperty(accordionSize == 0));
     }
 
-    // Controls ---------------------------------------------
+    // Controls ------------------------------------------------------------
     @FXML
     private void addCategory() {
         // popup for category, return popup with result
@@ -83,9 +86,7 @@ public class Controller_ViewCourse {
 
             // add to category then to accordion
             insertCategory(category);
-            TitledPane newCategory = newCategory(category);
-            categoryAccordion.getPanes().addAll(newCategory);
-            categoryAccordion.setExpandedPane(newCategory);
+            categoryAccordion.getPanes().addAll(newCategory(category));
 
             // show accordion
             int accordionSize = categoryAccordion.getPanes().size();
@@ -130,8 +131,22 @@ public class Controller_ViewCourse {
 
     @FXML
     private void addGrade() {
-        int courseID = getCategoryID(categoryAccordion.getExpandedPane().getText());
+        String name = categoryAccordion.getExpandedPane().getText();
+        TableView<Grade> table = (TableView<Grade>) (((AnchorPane)categoryAccordion.getExpandedPane().getContent()).getChildren().get(0));
 
+        try {
+            Statement statement = Main.gradebookDB.createStatement();
+            String sql = "INSERT INTO Grades (id, id_category, name) " +
+                    "VALUES (" + getNewGradeID() + ", " + getCategoryID(name) + ", \"" + name + "\");";
+            statement.executeUpdate(sql);
+
+            // set table
+            ObservableList<Grade> grades = getGrades(name);
+            table.setItems(grades);
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
     @FXML
@@ -153,7 +168,7 @@ public class Controller_ViewCourse {
             System.out.println(e);
         }
     }
-    // ------------------------------------------------------
+    // ---------------------------------------------------------------------
 
 
     // Helpers -------------------------------------------------------------
@@ -202,7 +217,7 @@ public class Controller_ViewCourse {
         try {
             statement = Main.gradebookDB.createStatement();
             String sql = "INSERT INTO Course_Categories (id, id_course, name, weight) " +
-                    "VALUES (" + Integer.toString(getCategoryID()) + ", " + Integer.toString(getCourseID()) +
+                    "VALUES (" + Integer.toString(getNewCategoryID()) + ", " + Integer.toString(getCourseID()) +
                     ", \"" + category.name +"\", " + Integer.toString(category.weight) + ");";
             statement.executeUpdate(sql);
         } catch (SQLException e) {
@@ -211,8 +226,49 @@ public class Controller_ViewCourse {
 
     }
 
+    private int getCourseID() {
+        int id = -1;
+
+        try {
+            Statement statement = Main.gradebookDB.createStatement();
+            String sql = "SELECT id, prefix, number " +
+                    "FROM Courses " +
+                    "WHERE prefix=\"" + clickedCourse.prefix + "\" AND number=" + clickedCourse.number + ";";
+            ResultSet rs = statement.executeQuery(sql);
+
+            if (rs.next()) {
+                id = rs.getInt("id");
+            } else {
+                id = 1;
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return id;
+    }
+
+    private int getCategoryID(String name) {
+        int id = -1;
+
+        try {
+            Statement statement = Main.gradebookDB.createStatement();
+            String sql = "SELECT id, id_course, name FROM Course_Categories " +
+                    "WHERE id_course=" + getCourseID() + " AND name=\"" + name + "\";";
+            ResultSet rs = statement.executeQuery(sql);
+
+            if (rs.next()) {
+                id = rs.getInt("id");
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return id;
+    }
+
     // get new ID for insertCategory
-    private int getCategoryID() {
+    private int getNewCategoryID() {
         ResultSet rs;
         int id = -1;
 
@@ -235,40 +291,21 @@ public class Controller_ViewCourse {
         return id;
     }
 
-    // get category ID for addGrade
-    private int getCategoryID(String name) {
+    private int getNewGradeID() {
         int id = -1;
 
         try {
             Statement statement = Main.gradebookDB.createStatement();
-            String sql = "SELECT id, name FROM Course_Categories " +
-                    "WHERE name=\"" + name + "\" AND id_course=" + getCourseID() + ";";
+            String sql = "SELECT id FROM Grades;";
             ResultSet rs = statement.executeQuery(sql);
 
-            if (rs.next()) {
-                id = rs.getInt("id");
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-
-        return id;
-    }
-
-    private int getCourseID() {
-        int id = -1;
-
-        try {
-            Statement statement = Main.gradebookDB.createStatement();
-            String sql = "SELECT id, prefix, number " +
-                    "FROM Courses " +
-                    "WHERE prefix=\"" + clickedCourse.prefix + "\" AND number=" + clickedCourse.number + ";";
-            ResultSet rs = statement.executeQuery(sql);
-
-            if (rs.next()) {
-                id = rs.getInt("id");
-            } else {
+            // if no grades
+            if (rs.isClosed()) {
                 id = 1;
+            }
+
+            while (rs.next()) {
+                id = rs.getInt("id") + 1;
             }
         } catch (Exception e) {
             System.out.println(e);
@@ -322,18 +359,81 @@ public class Controller_ViewCourse {
 
         // add tableView columns
         TableColumn<Grade, String> name = new TableColumn<>("Name");
+        name.setCellFactory(TextFieldTableCell.forTableColumn());
         name.setCellValueFactory((TableColumn.CellDataFeatures<Grade, String> p) ->
                 new SimpleStringProperty(p.getValue().name));
 
-        TableColumn<Grade, Integer> points = new TableColumn<>("Points");
-        points.setCellValueFactory((TableColumn.CellDataFeatures<Grade, Integer> p) ->
-                new SimpleIntegerProperty(p.getValue().received).asObject());
+        TableColumn<Grade, String> points = new TableColumn<>("Points");
+        points.setCellFactory(TextFieldTableCell.forTableColumn());
+        points.setCellValueFactory((TableColumn.CellDataFeatures<Grade, String> p) ->
+                new SimpleStringProperty(Integer.toString(p.getValue().received)));
 
-        TableColumn<Grade, Integer> outOf = new TableColumn<>("Out Of");
-        outOf.setCellValueFactory((TableColumn.CellDataFeatures<Grade, Integer> p) ->
-                new SimpleIntegerProperty(p.getValue().possible).asObject());
+        TableColumn<Grade, String> outOf = new TableColumn<>("Out Of");
+        outOf.setCellFactory(TextFieldTableCell.forTableColumn());
+        outOf.setCellValueFactory((TableColumn.CellDataFeatures<Grade, String> p) ->
+                new SimpleStringProperty(Integer.toString(p.getValue().possible)));
+
+        // when value is edited
+        name.setOnEditCommit(t -> {
+            String old_name = t.getTableView().getItems().get(t.getTablePosition().getRow()).name;
+            String category_name = categoryAccordion.getExpandedPane().getText();
+
+            // change in database
+            try {
+                Statement statement = Main.gradebookDB.createStatement();
+                String sql = "UPDATE Grades " +
+                        "SET name=\"" + t.getNewValue() + "\" " +
+                        "WHERE name=\"" + old_name + "\" AND id_category=" + getCategoryID(category_name) + ";";
+                statement.executeUpdate(sql);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+
+            // change in TableView
+            t.getTableView().getItems().get(t.getTablePosition().getRow()).name = t.getNewValue();
+        });
+        points.setOnEditCommit(t -> {
+            int old_received = t.getTableView().getItems().get(t.getTablePosition().getRow()).received;
+            String category_name = categoryAccordion.getExpandedPane().getText();
+
+            // change in database
+            try {
+                Statement statement = Main.gradebookDB.createStatement();
+                String sql = "UPDATE Grades " +
+                        "SET received_points=" + t.getNewValue() + " " +
+                        "WHERE received_points=" + old_received +
+                        " AND id_category=" + getCategoryID(category_name) + ";";
+                statement.executeUpdate(sql);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+
+            // change in TableView
+            t.getTableView().getItems().get(t.getTablePosition().getRow()).received = Integer.parseInt(t.getNewValue());
+        });
+        outOf.setOnEditCommit(t -> {
+            int old_possible = t.getTableView().getItems().get(t.getTablePosition().getRow()).possible;
+            String category_name = categoryAccordion.getExpandedPane().getText();
+
+            // change in database
+            try {
+                Statement statement = Main.gradebookDB.createStatement();
+                String sql = "UPDATE Grades " +
+                        "SET possible_points=" + t.getNewValue() + " " +
+                        "WHERE possible_points=" + old_possible +
+                        " AND id_category=" + getCategoryID(category_name) + ";";
+                statement.executeUpdate(sql);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+
+            // change in TableView
+            t.getTableView().getItems().get(t.getTablePosition().getRow()).possible = Integer.parseInt(t.getNewValue());
+        });
 
         categoryTableView.getColumns().addAll(name, points, outOf);
+        categoryTableView.setEditable(true);
+        categoryTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
 
         // set positions
@@ -351,35 +451,72 @@ public class Controller_ViewCourse {
 
         content.getChildren().addAll(categoryTableView, addGrade, deleteCategory);
         template.setContent(content);
-        template.setExpanded(true);
 
         return template;
     }
 
-    // used to get grades for newCategory()
+    // used to get grades for newCategory() and initializing grade table
     private ObservableList<Grade> getGrades(String categoryName) {
         ObservableList<Grade> grades = FXCollections.observableArrayList();
-        ResultSet rs = null;
+        ResultSet rs;
 
         // get grades for category id
         try {
             Statement statement = Main.gradebookDB.createStatement();
-            String sql = "SELECT * FROM Course_Categories " +
-                    "WHERE name=\"" + categoryName + "\" AND id_course=" + getCourseID() + ";";
+            String sql = "SELECT name, received_points, possible_points FROM Grades " +
+                    "WHERE id_category=" + getCategoryID(categoryName) + ";";
             rs = statement.executeQuery(sql);
 
-            Category c = new Category();
+            while (rs.next()) {
+                Grade grade = new Grade(
+                        rs.getString("name"),
+                        rs.getInt("received_points"),
+                        rs.getInt("possible_points")
+                );
+
+                grades.addAll(grade);
+            }
         } catch (Exception e) {
             System.out.println(e);
         }
 
-        // will need to find course id as well
-
         return grades;
     }
-
     // ---------------------------------------------------------------------
 
+
+    // Initialization -------------------------------------------------------
+    private void initializeAccordion() {
+        TitledPane titledPane;
+        categoryAccordion.getPanes().remove(firstCategory);
+
+        // get categories for this course
+        try {
+            Statement statement = Main.gradebookDB.createStatement();
+            String sql = "SELECT name, weight FROM Course_Categories " +
+                    "WHERE id_course=" + getCourseID() + ";";
+            ResultSet rs = statement.executeQuery(sql);
+
+            while (rs.next()) {
+                Category category = new Category(rs.getString("name"), rs.getInt("weight"));;
+                categoryAccordion.getPanes().addAll(newCategory(category));
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    private void initializeGrades() {
+        for (int i = 0; i < categoryAccordion.getPanes().size(); i++) {
+            String name = categoryAccordion.getPanes().get(i).getText();
+            TableView<Grade> gradeTableView = (TableView<Grade>)
+                    ((AnchorPane)(categoryAccordion.getPanes().get(i).getContent())).getChildren().get(0);
+
+            gradeTableView.setItems(getGrades(name));
+            gradeTableView.refresh();
+        }
+    }
+    // ---------------------------------------------------------------------
 
     // Navigation -------------------------------------------
     @FXML
