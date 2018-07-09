@@ -17,6 +17,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 import javax.swing.plaf.nimbus.State;
 import java.io.IOException;
@@ -44,6 +45,12 @@ public class Controller_Home {
 
     public void initialize() {
         back_home.visibleProperty().bind(new SimpleBooleanProperty(titles.size() > 1));
+        homeTable.setColumnResizePolicy(new Callback<TableView.ResizeFeatures, Boolean>() {
+            @Override
+            public Boolean call(TableView.ResizeFeatures p) {
+                return true;
+            }
+        });
 
         // get Current Semester table
         // also sets semesterID
@@ -80,24 +87,23 @@ public class Controller_Home {
             int index = getCurrentIndex();
 
             Statement statement = Main.gradebookDB.createStatement();
-            String sql_getRecentTable = "SELECT id_semester, prefix, number, section, description, received_points, possible_points, " +
-                    "credit_hours FROM Courses WHERE id_semester=" + Integer.toString(index) + ";";
+            String sql_getRecentTable = "SELECT * FROM Courses WHERE id_semester=" + Integer.toString(index) + ";";
             ResultSet rs = statement.executeQuery(sql_getRecentTable);
 
             // gets letter grade string
             // adds data
             while (rs.next()) {
                 String letter_grade;
-                int received = rs.getInt("received_points");
-                int possible = rs.getInt("possible_points");
+                double received = rs.getInt("received_points");
+                double possible = rs.getInt("possible_points");
 
-                if (possible - received <= 100) {
+                if (received/possible >= 0.9) {
                     letter_grade = "A";
-                } else if (possible - received <= 200) {
+                } else if (received/possible >= 0.8) {
                     letter_grade = "B";
-                } else if (possible - received <= 300) {
+                } else if (received/possible >= 0.7) {
                     letter_grade = "C";
-                } else if (possible - received <= 400) {
+                } else if (received/possible >= 0.6) {
                     letter_grade = "D";
                 } else if(received == 0 && possible == 1000) {
                     letter_grade = "N/A";
@@ -132,7 +138,7 @@ public class Controller_Home {
                     }
                 }
             });
-            homeTable.setOnKeyPressed( new EventHandler<KeyEvent>() {
+            homeTable.setOnKeyPressed(new EventHandler<KeyEvent>() {
                 @Override
                 public void handle(final KeyEvent keyEvent)
                 {
@@ -150,7 +156,6 @@ public class Controller_Home {
                     }
                 }
             } );
-            homeTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
             prefix.setCellValueFactory((TableColumn.CellDataFeatures<Course, String> p) ->
                     new SimpleStringProperty(p.getValue().prefix));
@@ -204,7 +209,9 @@ public class Controller_Home {
 
             while (rs.next()) {
                 quality_points += rs.getDouble("gpa") * rs.getInt("credits");
-                credits += rs.getInt("credits");
+                if (rs.getDouble("gpa") != 0) {
+                    credits += rs.getInt("credits");
+                }
             }
 
             gpa = Double.toString(quality_points/credits);
@@ -218,7 +225,7 @@ public class Controller_Home {
                 }
             }
 
-            if (gpa.equals("NaN")) {
+            if (gpa.equals("NaN") || gpa.equals("0.0")) {
                 overall_GPA.setText("N/A");
             } else {
                 overall_GPA.setText(gpa);

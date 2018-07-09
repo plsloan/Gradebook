@@ -406,17 +406,18 @@ public class Controller_ViewCourse {
                 ResultSet coursePoints = statement.executeQuery(getPoints);
 
                 if (coursePoints.next()) {
-                    int received = coursePoints.getInt("received_points");
-                    int possible = coursePoints.getInt("possible_points");
-                    points_field.setText(Integer.toString(received));
+                    double received = coursePoints.getInt("received_points");
+                    int received_int = coursePoints.getInt("received_points");
+                    double possible = coursePoints.getInt("possible_points");
+                    points_field.setText(Integer.toString(received_int));
 
-                    if (possible - received <= 100) {
+                    if (received/possible >= 0.9) {
                         letter_grade.setText("A");
-                    } else if (possible - received <= 200) {
+                    } else if (received/possible >= 0.8) {
                         letter_grade.setText("B");
-                    } else if (possible - received <= 300) {
+                    } else if (received/possible >= 0.7) {
                         letter_grade.setText("C");
-                    } else if (possible - received <= 400) {
+                    } else if (received/possible >= 0.6) {
                         letter_grade.setText("D");
                     } else {
                         letter_grade.setText("F");
@@ -494,6 +495,28 @@ public class Controller_ViewCourse {
             String sql = "DELETE FROM Grades " +
                     "WHERE id_category=" + idCategory + " AND name=\"" + name + "\";";
             statement.executeUpdate(sql);
+
+
+            // reset points and letter grade
+            String getPoints =
+                    "SELECT received_points, possible_points FROM Courses " +
+                    "WHERE id=" + getCourseID() + ";";
+            ResultSet points = statement.executeQuery(getPoints);
+
+            double possible_points = points.getInt("possible_points");
+            double received_points = points.getInt("received_points");
+            points_field.setText(Integer.toString(points.getInt("received_points")));
+            if (received_points/possible_points >= 0.9) {
+                letter_grade.setText("A");
+            } else if (received_points/possible_points >= 0.8) {
+                letter_grade.setText("B");
+            } else if (received_points/possible_points >= 0.7) {
+                letter_grade.setText("C");
+            } else if (received_points/possible_points >= 0.6) {
+                letter_grade.setText("D");
+            } else {
+                letter_grade.setText("F");
+            }
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -549,26 +572,27 @@ public class Controller_ViewCourse {
 
                 Statement gradeStatement = Main.gradebookDB.createStatement();
                 String getGradePoints =
-                        "SELECT id_category, received_points FROM Grades " +
+                        "SELECT id_category, received_points, possible_points FROM Grades " +
                         "WHERE id_category=" + idCategory + ";";
                 ResultSet gradePoints = gradeStatement.executeQuery(getGradePoints);
 
                 // calculate received_points
                 while (gradePoints.next()) {
                     received_points += gradePoints.getInt("received_points");
+                    possible_points += gradePoints.getInt("possible_points");
                 }
             }
 
-            // get category weight
-            String getCategoryPoints =
-                    "SELECT id, id_course, weight FROM Course_Categories " +
-                    "WHERE id_course=" + idCourse + ";";
-            ResultSet categoryPoints = statement.executeQuery(getCategoryPoints);
-
-            // calculate possible_points
-            while (categoryPoints.next()) {
-                possible_points += categoryPoints.getInt("weight");
-            }
+//            // get category weight
+//            String getCategoryPoints =
+//                    "SELECT id, id_course, weight FROM Course_Categories " +
+//                    "WHERE id_course=" + idCourse + ";";
+//            ResultSet categoryPoints = statement.executeQuery(getCategoryPoints);
+//
+//            // calculate possible_points
+//            while (categoryPoints.next()) {
+//                possible_points += categoryPoints.getInt("weight");
+//            }
 
             // set course points
             String setCoursePoints =
@@ -582,6 +606,7 @@ public class Controller_ViewCourse {
             // course -> semester gpa ------------------------------------------------------------------------------
             // calculate
             double quality_points = 0, credits = 0;
+            double received_double = 0, possible_double = 0;
             String gpa;
 
             // get idSemester
@@ -602,18 +627,18 @@ public class Controller_ViewCourse {
             ResultSet quality_credits = statement.executeQuery(getQualityCredits);
 
             while (quality_credits.next()) {
-                received_points = quality_credits.getInt("received_points");
-                possible_points = quality_credits.getInt("possible_points");
+                received_double = quality_credits.getInt("received_points");
+                possible_double = quality_credits.getInt("possible_points");
                 credits += quality_credits.getInt("credit_hours");
                 idSemester = quality_credits.getInt("id_semester");
 
-                if (possible_points - received_points <= 100) {
+                if (received_double/possible_double >= 0.9) {
                     quality_points += 4*(quality_credits.getInt("credit_hours"));
-                } else if (possible_points - received_points <= 200) {
+                } else if (received_double/possible_double >= 0.8) {
                     quality_points += 3*(quality_credits.getInt("credit_hours"));
-                } else if (possible_points - received_points <= 300) {
+                } else if (received_double/possible_double >= 0.7) {
                     quality_points += 2*(quality_credits.getInt("credit_hours"));
-                } else if (possible_points - received_points <= 400) {
+                } else if (received_double/possible_double >= 0.6) {
                     quality_points += (quality_credits.getInt("credit_hours"));
                 }
             }

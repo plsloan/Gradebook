@@ -483,7 +483,7 @@ public class Controller_Semesters {
         rs = statement.executeQuery(sql);
 
         // go from ResultSet to Course
-        int received = 0, possible = 0;
+        double received = 0, possible = 0;
         while(rs.next()) {
             Course c = new Course();
             for (int i = 0; i < 7; i++) {
@@ -501,13 +501,13 @@ public class Controller_Semesters {
             }
 
             // get the letter grade
-            if ((possible - received) <= 100) {
+            if (received/possible >= 0.9) {
                 c.add(4, "A");
-            } else if ((possible - received) <= 200) {
+            } else if (received/possible >= 0.8) {
                 c.add(4, "B");
-            } else if ((possible - received) <= 300) {
+            } else if (received/possible >= 0.7) {
                 c.add(4, "C");
-            } else if ((possible - received) <= 400) {
+            } else if (received/possible >= 0.6) {
                 c.add(4, "D");
             } else if (received == 0 && possible == 1000) {
                 c.add(4, "N/A");
@@ -544,8 +544,7 @@ public class Controller_Semesters {
 
 
     // Navigation --------------------------------------------------------------------------------
-    @FXML
-    private void goToHome() throws IOException {
+    @FXML private void goToHome() throws IOException {
         Parent homeParent = FXMLLoader.load(getClass().getResource("Home.fxml"));
         Scene home = new Scene(homeParent);
 
@@ -556,9 +555,7 @@ public class Controller_Semesters {
 
         Controller_Home.titles.add("Home");
     }
-
-    @FXML
-    private void goToGPA() throws IOException {
+    @FXML private void goToGPA() throws IOException {
         Parent gpaParent = FXMLLoader.load(getClass().getResource("GPA_Calculator.fxml"));
         Scene gpa = new Scene(gpaParent);
 
@@ -569,9 +566,7 @@ public class Controller_Semesters {
 
         Controller_Home.titles.add("Calculate GPA");
     }
-
-    @FXML
-    private void goToAddCourse() throws IOException {
+    @FXML private void goToAddCourse() throws IOException {
         Parent addCourseParent = FXMLLoader.load(getClass().getResource("Course_Add.fxml"));
         Scene addCourse = new Scene(addCourseParent);
 
@@ -582,9 +577,7 @@ public class Controller_Semesters {
 
         Controller_Home.titles.add("Add Course");
     }
-
-    @FXML
-    private void goToViewCourse() throws IOException {
+    @FXML private void goToViewCourse() throws IOException {
         Parent viewCourseParent = FXMLLoader.load(getClass().getResource("Course_View.fxml"));
         Scene viewCourse = new Scene(viewCourseParent);
 
@@ -595,9 +588,7 @@ public class Controller_Semesters {
 
         Controller_Home.titles.add("View Course");
     }
-
-    @FXML
-    private void goBack() throws IOException {
+    @FXML private void goBack() throws IOException {
         int n = Controller_Home.titles.size() - 1;
         Controller_Home.titles.remove(n);
 
