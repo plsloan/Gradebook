@@ -111,7 +111,7 @@
                               <Font size="16.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="points" editable="false" layoutX="114.0" prefHeight="30.0" prefWidth="50.0">
+                        <TextField fx:id="points_field" editable="false" layoutX="114.0" prefHeight="30.0" prefWidth="50.0">
                            <font>
                               <Font size="14.0" />
                            </font>

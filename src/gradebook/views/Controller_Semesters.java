@@ -34,16 +34,7 @@ public class Controller_Semesters {
     static Accordion copySemesters;
     static Course clickedCourse;
     static int currentIndex = 9999;
-    static String viewCourseName = "name";
     private int table_size = 0;
-
-    /****************************************************************
-     * Add to initialize                                            *
-     * -- check database for current_home                           *
-     *                                                              *
-     * Add to setCurrentSemester()                                  *
-     * -- set current_home and set current "true" value to false    *
-     ****************************************************************/
 
     public void initialize() throws Exception {
         if (Main.gradebookDB != null) {
@@ -86,8 +77,7 @@ public class Controller_Semesters {
     }
 
     // Controls ----------------------------------------------------------------------------------
-    @FXML // create TitledPane
-    public void addSemester() {
+    @FXML public void addSemester() {
 //      create popup for input
         TextInputDialog popup = new TextInputDialog();
         popup.setTitle("Enter Semester Name...");
@@ -125,9 +115,7 @@ public class Controller_Semesters {
 
         }
     }
-
-    @FXML
-    public void deleteSemester() throws Exception {
+    @FXML public void deleteSemester() throws Exception {
         String name = semestersAccordion.getExpandedPane().getText();
         int id = getSemesterID(name);
 
@@ -172,9 +160,7 @@ public class Controller_Semesters {
             setCurrentSemester();
         }
     }
-
-    @FXML
-    public void setCurrentSemester() {
+    @FXML public void setCurrentSemester() {
         String name = semestersAccordion.getExpandedPane().getText();
         currentIndex = semestersAccordion.getPanes().indexOf(semestersAccordion.getExpandedPane());
 
@@ -247,7 +233,6 @@ public class Controller_Semesters {
 
         return id;
     }
-
     private int getSemesterID(String name) {
         ResultSet rs;
         int id = -1;
@@ -435,7 +420,6 @@ public class Controller_Semesters {
 
         return id;
     }
-
     private ArrayList<Integer> deleteCategory(int idCourse) {
         ArrayList<Integer> IDs = null;
 
@@ -457,7 +441,6 @@ public class Controller_Semesters {
 
         return IDs;
     }
-
     private void deleteGrade(ArrayList<Integer> idsCategories) {
         try {
             Statement statement = Main.gradebookDB.createStatement();

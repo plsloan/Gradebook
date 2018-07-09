@@ -62,8 +62,7 @@ public class Controller_AddCourse {
 
 
     // Controls ---------------------------------------------------
-    @FXML
-    private void addCategory() {
+    @FXML private void addCategory() {
         // create and add category
         Category category = new Category(name_field.getText(), Integer.parseInt(weight_field.getText()));
         categories.addAll(category);
@@ -89,9 +88,7 @@ public class Controller_AddCourse {
         name_field.setText("");
         weight_field.setText("");
     }
-
-    @FXML
-    private void submitCourse() {
+    @FXML private void submitCourse() {
         // create course
         Course course = new Course();
 
@@ -114,7 +111,13 @@ public class Controller_AddCourse {
                     "VALUES (" + Integer.toString(id_course) + ", " + Integer.toString(id_semester) + ", \"" + course.prefix + "\", " +
                     Integer.toString(course.number) + ", \"" + course.section + "\", \"" + course.description + "\", " +
                     Integer.toString(course.credit_hours) + ");";
-            statement.execute(sql_insertCourse);
+            statement.executeUpdate(sql_insertCourse);
+
+            String addCredits =
+                    "UPDATE Semesters " +
+                    "SET credits=credits+" + course.credit_hours + " " +
+                    "WHERE id=" + id_semester + ";";
+            statement.executeUpdate(addCredits);
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -150,7 +153,6 @@ public class Controller_AddCourse {
 
         return id;
     }
-
     private int getSemesterID() {
         if (titles.get(titles.size()-1-1).equals("Semesters")) {
             int index = copySemesters.getPanes().indexOf(currentSemester) + 1;
@@ -175,7 +177,6 @@ public class Controller_AddCourse {
             return semesterID;   // get from home page
         }
     }
-
     private int getCourseID() {
         int id = -1;
 
@@ -201,8 +202,7 @@ public class Controller_AddCourse {
 
 
     // Navigation -------------------------------------------------
-    @FXML
-    private void goToHome() throws IOException {
+    @FXML private void goToHome() throws IOException {
         Parent homeParent = FXMLLoader.load(getClass().getResource("Home.fxml"));
         Scene home = new Scene(homeParent);
 
@@ -213,9 +213,7 @@ public class Controller_AddCourse {
 
         titles.add("Home");
     }
-
-    @FXML
-    private void goToSemesters() throws IOException {
+    @FXML private void goToSemesters() throws IOException {
         Parent SemestersParent = FXMLLoader.load(getClass().getResource("Semesters.fxml"));
         Scene semesters = new Scene(SemestersParent);
 
@@ -226,9 +224,7 @@ public class Controller_AddCourse {
 
         titles.add("Semesters");
     }
-
-    @FXML
-    private void goToGPA() throws IOException {
+    @FXML private void goToGPA() throws IOException {
         Parent gpaParent = FXMLLoader.load(getClass().getResource("GPA_Calculator.fxml"));
         Scene gpa = new Scene(gpaParent);
 
@@ -239,9 +235,7 @@ public class Controller_AddCourse {
 
         titles.add("Calculate GPA");
     }
-
-    @FXML
-    private void goBack() throws IOException {
+    @FXML private void goBack() throws IOException {
         int n = titles.size() - 1;
         titles.remove(n);
 

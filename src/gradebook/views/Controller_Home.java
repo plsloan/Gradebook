@@ -150,6 +150,7 @@ public class Controller_Home {
                     }
                 }
             } );
+            homeTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
             prefix.setCellValueFactory((TableColumn.CellDataFeatures<Course, String> p) ->
                     new SimpleStringProperty(p.getValue().prefix));
@@ -190,13 +191,14 @@ public class Controller_Home {
         }
     }
     private void setOverallGPA() {
-        double quality_points = 0;
+        double quality_points = 0.0;
         double credits = 0.0;
 
         try {
             String gpa;
             Statement statement = Main.gradebookDB.createStatement();
-            String get_overall = "SELECT id, name, printf(\"%.2f\", gpa) as gpa, credits " +
+            String get_overall =
+                    "SELECT id, name, printf(\"%.2f\", gpa) as gpa, credits " +
                     "FROM Semesters;";
             ResultSet rs = statement.executeQuery(get_overall);
 

@@ -44,7 +44,7 @@ public class Controller_ViewCourse {
     @FXML private TextField section;
     @FXML private TextField description;
     @FXML private TextField credit_hours;
-    @FXML private TextField points;
+    @FXML private TextField points_field;
     @FXML private TextField letter_grade;
     @FXML private Accordion categoryAccordion;
     @FXML private TitledPane firstCategory;
@@ -56,7 +56,7 @@ public class Controller_ViewCourse {
         section.setText(clickedCourse.section);
         description.setText(clickedCourse.description);
         credit_hours.setText(Integer.toString(clickedCourse.credit_hours));
-        points.setText(getPoints());
+        points_field.setText(getPoints());
         letter_grade.setText(clickedCourse.letter_grade);
 
         // initialize accordion and grade tables
@@ -375,7 +375,8 @@ public class Controller_ViewCourse {
                 Statement statement = Main.gradebookDB.createStatement();
                 String sql = "UPDATE Grades " +
                         "SET name=\"" + t.getNewValue() + "\" " +
-                        "WHERE name=\"" + old_name + "\" AND id_category=" + getCategoryID(category_name) + ";";
+                        "WHERE name=\"" + old_name + "\" " +
+                        "AND id_category=" + getCategoryID(category_name) + ";";
                 statement.executeUpdate(sql);
             } catch (Exception e) {
                 System.out.println(e);
@@ -386,6 +387,7 @@ public class Controller_ViewCourse {
         });
         points.setOnEditCommit(t -> {
             int old_received = t.getTableView().getItems().get(t.getTablePosition().getRow()).received;
+            String grade_name = t.getTableView().getItems().get(t.getTablePosition().getRow()).name;
             String category_name = categoryAccordion.getExpandedPane().getText();
 
             // change in database
@@ -394,8 +396,32 @@ public class Controller_ViewCourse {
                 String sql = "UPDATE Grades " +
                         "SET received_points=" + t.getNewValue() + " " +
                         "WHERE received_points=" + old_received +
-                        " AND id_category=" + getCategoryID(category_name) + ";";
+                        " AND id_category=" + getCategoryID(category_name) + " " +
+                        " AND name=\"" + grade_name + "\";";
                 statement.executeUpdate(sql);
+                getNewPoints();
+
+                String getPoints = "SELECT id, received_points, possible_points FROM Courses " +
+                        "WHERE id=" + getCourseID() + ";";
+                ResultSet coursePoints = statement.executeQuery(getPoints);
+
+                if (coursePoints.next()) {
+                    int received = coursePoints.getInt("received_points");
+                    int possible = coursePoints.getInt("possible_points");
+                    points_field.setText(Integer.toString(received));
+
+                    if (possible - received <= 100) {
+                        letter_grade.setText("A");
+                    } else if (possible - received <= 200) {
+                        letter_grade.setText("B");
+                    } else if (possible - received <= 300) {
+                        letter_grade.setText("C");
+                    } else if (possible - received <= 400) {
+                        letter_grade.setText("D");
+                    } else {
+                        letter_grade.setText("F");
+                    }
+                }
             } catch (Exception e) {
                 System.out.println(e);
             }
@@ -462,7 +488,6 @@ public class Controller_ViewCourse {
 
         return template;
     }
-
     private void deleteGrade(int idCategory, String name) {
         try {
             Statement statement = Main.gradebookDB.createStatement();
@@ -474,7 +499,6 @@ public class Controller_ViewCourse {
         }
     }
 
-
     // used to get grades for newCategory() and initializing grade table
     private ObservableList<Grade> getGrades(String categoryName) {
         ObservableList<Grade> grades = FXCollections.observableArrayList();
@@ -483,7 +507,8 @@ public class Controller_ViewCourse {
         // get grades for category id
         try {
             Statement statement = Main.gradebookDB.createStatement();
-            String sql = "SELECT name, received_points, possible_points FROM Grades " +
+            String sql =
+                    "SELECT name, received_points, possible_points FROM Grades " +
                     "WHERE id_category=" + getCategoryID(categoryName) + ";";
             rs = statement.executeQuery(sql);
 
@@ -503,12 +528,121 @@ public class Controller_ViewCourse {
         return grades;
     }
 
-    // add and remove points to current course's received total
-    private void addCoursePoints() {
+    // calculate Category received_points, Course received_points & possible_points, and Semester gpa
+    private void getNewPoints() {
+        try {
+            // grade -> course points ----------------------------------------------------------------------------
+            // get grade points
+            int received_points = 0, possible_points = 0,
+                    idCategory,
+                    idCourse = getCourseID(),
+                    idSemester = -1;
+            Statement statement = Main.gradebookDB.createStatement();
 
-    }
-    private void removeCoursePoints() {
+            String getCategoryIDs =
+                    "SELECT id, id_course FROM Course_Categories " +
+                    "WHERE id_course=" + idCourse + ";";
+            ResultSet idCategoryList = statement.executeQuery(getCategoryIDs);
 
+            while (idCategoryList.next()) {
+                idCategory = idCategoryList.getInt("id");
+
+                Statement gradeStatement = Main.gradebookDB.createStatement();
+                String getGradePoints =
+                        "SELECT id_category, received_points FROM Grades " +
+                        "WHERE id_category=" + idCategory + ";";
+                ResultSet gradePoints = gradeStatement.executeQuery(getGradePoints);
+
+                // calculate received_points
+                while (gradePoints.next()) {
+                    received_points += gradePoints.getInt("received_points");
+                }
+            }
+
+            // get category weight
+            String getCategoryPoints =
+                    "SELECT id, id_course, weight FROM Course_Categories " +
+                    "WHERE id_course=" + idCourse + ";";
+            ResultSet categoryPoints = statement.executeQuery(getCategoryPoints);
+
+            // calculate possible_points
+            while (categoryPoints.next()) {
+                possible_points += categoryPoints.getInt("weight");
+            }
+
+            // set course points
+            String setCoursePoints =
+                    "UPDATE Courses " +
+                    "SET received_points=" + received_points + ", possible_points=" + possible_points + " " +
+                    "WHERE id=" + idCourse + ";";
+            statement.executeUpdate(setCoursePoints);
+            // -----------------------------------------------------------------------------------------------------
+
+
+            // course -> semester gpa ------------------------------------------------------------------------------
+            // calculate
+            double quality_points = 0, credits = 0;
+            String gpa;
+
+            // get idSemester
+            Statement statement_SemesterID = Main.gradebookDB.createStatement();
+            String getSemesterID =
+                    "SELECT id_semester FROM Courses " +
+                    "WHERE id=" + getCourseID() + ";";
+            ResultSet SemesterID = statement_SemesterID.executeQuery(getSemesterID);
+
+            if(SemesterID.next()) {
+                idSemester = SemesterID.getInt("id_semester");
+            }
+
+            // get quality points and credits
+            String getQualityCredits =
+                    "SELECT id, id_semester, received_points, possible_points, credit_hours FROM Courses " +
+                    "WHERE id_semester=" + idSemester + ";";
+            ResultSet quality_credits = statement.executeQuery(getQualityCredits);
+
+            while (quality_credits.next()) {
+                received_points = quality_credits.getInt("received_points");
+                possible_points = quality_credits.getInt("possible_points");
+                credits += quality_credits.getInt("credit_hours");
+                idSemester = quality_credits.getInt("id_semester");
+
+                if (possible_points - received_points <= 100) {
+                    quality_points += 4*(quality_credits.getInt("credit_hours"));
+                } else if (possible_points - received_points <= 200) {
+                    quality_points += 3*(quality_credits.getInt("credit_hours"));
+                } else if (possible_points - received_points <= 300) {
+                    quality_points += 2*(quality_credits.getInt("credit_hours"));
+                } else if (possible_points - received_points <= 400) {
+                    quality_points += (quality_credits.getInt("credit_hours"));
+                }
+            }
+
+            // check for rounding
+            gpa = Double.toString(quality_points/credits);
+            if (gpa.length() >= 4) {
+                if (Character.getNumericValue(gpa.charAt(4)) >= 5) {
+                    gpa = gpa.substring(0, 3) + Integer.toString(Character.getNumericValue(gpa.charAt(3)) + 1);
+                } else {
+                    gpa = gpa.substring(0, 4);
+                }
+            }
+
+
+            // set semester GPA
+            if (!gpa.equals("NaN")) {
+                String setGPA =
+                        "UPDATE Semesters " +
+                        "SET gpa=" + gpa + " " +
+                        "WHERE id=" + idSemester + ";";
+                statement.executeUpdate(setGPA);
+            }
+            // -----------------------------------------------------------------------------------------------------
+
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
     // ---------------------------------------------------------------------
 
