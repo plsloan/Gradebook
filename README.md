@@ -10,5 +10,6 @@ Just download
 and you're good to go!
 
 
-## Home Page 
-### (Current Semester)
+### Home Page (Current Semester)
+
+On this page, all courses in the selected "current semester" will be shown along with the semester's GPA, the GPA for completed semesters, the potential GPA if the semester were to end now, options to add a course, or view semesters. Simply double click a course to view it and add grades.
