@@ -1,12 +1,10 @@
 package gradebook.views;
 
 import gradebook.Category;
-import gradebook.Course;
 import gradebook.Grade;
 import gradebook.Main;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -26,12 +24,10 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
-import javax.swing.plaf.nimbus.State;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Optional;
 
 import static gradebook.views.Controller_Semesters.clickedCourse;
@@ -69,7 +65,7 @@ public class Controller_ViewCourse {
         emptyLabel.visibleProperty().bind(new SimpleBooleanProperty(accordionSize == 0));
     }
 
-    // Controls ------------------------------------------------------------
+    // Controls ----------------------------------------------------------------------------------------------------
     @FXML private void addCategory() {
         // popup for category, return popup with result
         Dialog<Pair<String, Integer>> popup = categoryPopup();
@@ -161,10 +157,10 @@ public class Controller_ViewCourse {
             System.out.println(e);
         }
     }
-    // ---------------------------------------------------------------------
+    // -------------------------------------------------------------------------------------------------------------
 
 
-    // Helpers -------------------------------------------------------------
+    // Helpers -----------------------------------------------------------------------------------------------------
     // make popup, get info, and return as Dialog
     private Dialog<Pair<String, Integer>> categoryPopup() {
 
@@ -645,7 +641,7 @@ public class Controller_ViewCourse {
 
             // check for rounding
             gpa = Double.toString(quality_points/credits);
-            if (gpa.length() >= 4) {
+            if (gpa.length() > 4) {
                 if (Character.getNumericValue(gpa.charAt(4)) >= 5) {
                     gpa = gpa.substring(0, 3) + Integer.toString(Character.getNumericValue(gpa.charAt(3)) + 1);
                 } else {
@@ -669,10 +665,10 @@ public class Controller_ViewCourse {
             System.out.println(e);
         }
     }
-    // ---------------------------------------------------------------------
+    // -------------------------------------------------------------------------------------------------------------
 
 
-    // Initialization -------------------------------------------------------
+    // Initialization ----------------------------------------------------------------------------------------------
     private void initializeAccordion() {
         TitledPane titledPane;
         categoryAccordion.getPanes().remove(firstCategory);
@@ -718,7 +714,8 @@ public class Controller_ViewCourse {
 
         return points;
     }
-    // ---------------------------------------------------------------------
+    // -------------------------------------------------------------------------------------------------------------
+
 
     // Navigation -------------------------------------------
     @FXML private void goToHome() throws IOException {

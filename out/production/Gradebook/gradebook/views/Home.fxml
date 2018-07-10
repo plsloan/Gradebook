@@ -41,7 +41,7 @@
                         <Font size="20.0" />
                      </font>
                   </Label>
-                  <TableView fx:id="homeTable" editable="true" layoutX="55.0" layoutY="85.0" prefHeight="820.0" prefWidth="798.0" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="150.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="80.0">
+                  <TableView fx:id="homeTable" editable="true" layoutX="55.0" layoutY="85.0" prefHeight="360.0" prefWidth="798.0" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="158.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="80.0">
                     <columns>
                       <TableColumn fx:id="prefix" minWidth="63.0" resizable="false" text="Prefix" />
                         <TableColumn fx:id="number" minWidth="45.33331298828125" resizable="false" text="Number" />
@@ -54,50 +54,28 @@
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                      </columnResizePolicy>
                   </TableView>
-                  <Group layoutX="50.0" layoutY="460.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50.0">
+                  <Group layoutX="50.0" layoutY="419.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50.0">
                      <children>
-                        <Text layoutY="22.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Current GPA: ">
+                        <Text layoutX="2.0" layoutY="73.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Completed Semesters:">
                            <font>
                               <Font size="18.0" />
                            </font>
                         </Text>
-                        <TextField fx:id="current_GPA" editable="false" layoutX="111.0" prefHeight="30.0" prefWidth="53.0">
+                        <TextField fx:id="completed_GPA" editable="false" layoutX="192.0" layoutY="51.0" prefHeight="30.0" prefWidth="53.0">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Text layoutX="2.0" layoutY="72.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Overall GPA: ">
+                        <Text layoutX="2.0" layoutY="123.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Potential GPA: ">
                            <font>
                               <Font size="18.0" />
                            </font>
                         </Text>
-                        <TextField fx:id="overall_GPA" editable="false" layoutX="111.0" layoutY="50.0" prefHeight="30.0" prefWidth="53.0">
+                        <TextField fx:id="potential_GPA" editable="false" layoutX="192.0" layoutY="101.0" prefHeight="30.0" prefWidth="53.0">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                     </children>
-                  </Group>
-                  <Group layoutX="449.0" layoutY="463.0" AnchorPane.bottomAnchor="55.0" AnchorPane.rightAnchor="125.0">
-                     <children>
-                        <Button mnemonicParsing="false" onAction="#goToAddCourse" prefHeight="68.0" prefWidth="130.0" text="Add Course" underline="true">
-                           <graphic>
-                              <ImageView fitHeight="25.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../icons/add.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                        <Button fx:id="semesterBtn" layoutX="194.0" mnemonicParsing="false" onAction="#goToSemesters" prefHeight="68.0" prefWidth="130.0" text="View Semesters" underline="true">
-                           <graphic>
-                              <ImageView fitHeight="25.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../icons/view.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
                      </children>
                   </Group>
                   <Button fx:id="back_home" mnemonicParsing="false" onAction="#goBack" visible="false">
@@ -109,6 +87,38 @@
                         </ImageView>
                      </graphic>
                   </Button>
+                  <Group layoutX="565.0" layoutY="468.0">
+                     <children>
+                        <Button layoutY="45.0" mnemonicParsing="false" onAction="#goToAddCourse" prefHeight="35.0" prefWidth="130.0" text="Add Course" underline="true">
+                           <graphic>
+                              <ImageView fitHeight="25.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../icons/add.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button fx:id="semesterBtn" layoutX="153.0" layoutY="45.0" mnemonicParsing="false" onAction="#goToSemesters" prefHeight="35.0" prefWidth="130.0" text="View Semesters" underline="true">
+                           <graphic>
+                              <ImageView fitHeight="25.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../icons/view.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Text layoutY="22.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Current Semester: ">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Text>
+                        <TextField fx:id="current_GPA" editable="false" layoutX="192.0" prefHeight="30.0" prefWidth="53.0">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                     </children>
+                  </Group>
                </children>
             </AnchorPane>
          </content>

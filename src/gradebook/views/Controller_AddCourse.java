@@ -61,7 +61,7 @@ public class Controller_AddCourse {
     }
 
 
-    // Controls ---------------------------------------------------
+    // Controls ----------------------------------------------------------------------------------------------------
     @FXML private void addCategory() {
         // create and add category
         Category category = new Category(name_field.getText(), Integer.parseInt(weight_field.getText()));
@@ -128,10 +128,10 @@ public class Controller_AddCourse {
             System.out.println(e);
         }
     }
-    // ------------------------------------------------------------
+    // -------------------------------------------------------------------------------------------------------------
 
 
-    // Helpers ----------------------------------------------------
+    // Helpers -----------------------------------------------------------------------------------------------------
     private int getCategoryId() {
         int id = -1;
 
@@ -198,10 +198,10 @@ public class Controller_AddCourse {
 
         return id;
     }
-    // ------------------------------------------------------------
+    // -------------------------------------------------------------------------------------------------------------
 
 
-    // Navigation -------------------------------------------------
+    // Navigation --------------------------------------------------------------------------------------------------
     @FXML private void goToHome() throws IOException {
         Parent homeParent = FXMLLoader.load(getClass().getResource("Home.fxml"));
         Scene home = new Scene(homeParent);

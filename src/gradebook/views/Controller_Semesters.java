@@ -76,7 +76,7 @@ public class Controller_Semesters {
         }
     }
 
-    // Controls ----------------------------------------------------------------------------------
+    // Controls ----------------------------------------------------------------------------------------------------
     @FXML public void addSemester() {
 //      create popup for input
         TextInputDialog popup = new TextInputDialog();
@@ -175,10 +175,11 @@ public class Controller_Semesters {
             System.out.println(e);
         }
     }
-    // -------------------------------------------------------------------------------------------
+    // -------------------------------------------------------------------------------------------------------------
 
 
-    // Helpers -----------------------------------------------------------------------------------
+
+    // Helpers -----------------------------------------------------------------------------------------------------
     // get results from query of names from semesters
     private ResultSet getSemesterNames(Connection c) {
         Statement statement;
@@ -414,6 +415,47 @@ public class Controller_Semesters {
 
             sql = "DELETE FROM Courses WHERE prefix=\"" + course.prefix + "\" AND number=" + course.number + ";";
             statement.executeUpdate(sql);
+
+
+            // update gpa
+            sql = "SELECT received_points, possible_points, credit_hours FROM Courses " +
+                  "WHERE id_semester=" + getSemesterID() + ";";
+            ResultSet newGPA = statement.executeQuery(sql);
+            double received = newGPA.getInt("received_points"),
+                   possible = newGPA.getInt("possible_points"),
+                   qualityPoints = 0, credits = 0;
+            int credit_hours = newGPA.getInt("credit_hours");
+            while (newGPA.next()) {
+                if (received != 0) {
+                    credits += credit_hours;
+                }
+
+                if (received/possible >= 0.9) {
+                    qualityPoints += 4*credit_hours;
+                } else if (received/possible >= 0.8) {
+                    qualityPoints += 3*credit_hours;
+                } else if (received/possible >= 0.7) {
+                    qualityPoints += 2*credit_hours;
+                } else if (received/possible >= 0.6) {
+                    qualityPoints += credit_hours;
+                }
+            }
+
+            String gpa = Double.toString(qualityPoints/credits);
+            if (gpa.length() > 4) {
+                if (Character.getNumericValue(gpa.charAt(4)) >= 5) {
+                    gpa = gpa.substring(0, 3) + Integer.toString(Character.getNumericValue(gpa.charAt(3)) + 1);
+                } else {
+                    gpa = gpa.substring(0, 4);
+                }
+            }
+
+
+            sql = "UPDATE Semesters SET credits=credits-" + course.credit_hours + ", gpa=" + gpa + " " +
+                  "WHERE id=" + getSemesterID() + ";";
+            statement.executeUpdate(sql);
+
+            // update gpa
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -540,10 +582,10 @@ public class Controller_Semesters {
             System.out.println(e);
         }
     }
-    // -------------------------------------------------------------------------------------------
+    // -------------------------------------------------------------------------------------------------------------
 
 
-    // Navigation --------------------------------------------------------------------------------
+    // Navigation --------------------------------------------------------------------------------------------------
     @FXML private void goToHome() throws IOException {
         Parent homeParent = FXMLLoader.load(getClass().getResource("Home.fxml"));
         Scene home = new Scene(homeParent);

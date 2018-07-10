@@ -16,9 +16,8 @@ public class Controller_GPA {
 
 
 
-    // Navigation ------------------------------------------------
-    @FXML
-    private void goToHome() throws IOException {
+    // Navigation --------------------------------------------------------------------------------------------------
+    @FXML private void goToHome() throws IOException {
         Parent homeParent = FXMLLoader.load(getClass().getResource("Home.fxml"));
         Scene home = new Scene(homeParent);
 
@@ -29,9 +28,7 @@ public class Controller_GPA {
 
         Controller_Home.titles.add("Home");
     }
-
-    @FXML
-    private void goToSemesters() throws IOException {
+    @FXML private void goToSemesters() throws IOException {
         Parent SemestersParent = FXMLLoader.load(getClass().getResource("Semesters.fxml"));
         Scene semesters = new Scene(SemestersParent);
 
@@ -42,9 +39,7 @@ public class Controller_GPA {
 
         Controller_Home.titles.add("Semesters");
     }
-
-    @FXML
-    private void goBack() throws IOException {
+    @FXML private void goBack() throws IOException {
         int n = Controller_Home.titles.size() - 1;
         Controller_Home.titles.remove(n);
 
@@ -74,5 +69,4 @@ public class Controller_GPA {
         window.setTitle(Controller_Home.titles.get(n-1));
         window.show();
     }
-
 }

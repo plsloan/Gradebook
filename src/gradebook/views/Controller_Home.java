@@ -33,7 +33,8 @@ public class Controller_Home {
     @FXML private Button semesterBtn;
     @FXML private Button back_home;
     @FXML private TextField current_GPA;
-    @FXML private TextField overall_GPA;
+    @FXML private TextField completed_GPA;
+    @FXML private TextField potential_GPA;
     @FXML private TableView<Course> homeTable;
     @FXML private TableColumn<Course, String> prefix;
     @FXML private TableColumn<Course, Integer> number;
@@ -52,15 +53,14 @@ public class Controller_Home {
             }
         });
 
-        // get Current Semester table
-        // also sets semesterID
         initializeCurrentIndex();
         getCurrentTable();
         setCurrentGPA();
-        setOverallGPA();
+        setCompletedGPA();
+        setPotentialGPA();
     }
 
-    // Helpers -----------------------------------------------------
+    // Helpers -----------------------------------------------------------------------------------------------------
     // initialization
     private void initializeCurrentIndex() {
         int index = 0;
@@ -176,28 +176,114 @@ public class Controller_Home {
     }
     private void setCurrentGPA() {
         try {
+            double quality_points = 0, credits = 0;
             String gpa;
             Statement statement = Main.gradebookDB.createStatement();
-            String get_semester = "SELECT id, name, printf(\"%.2f\", gpa) as gpa " +
-                    "FROM Semesters " +
-                    "WHERE id=" + Integer.toString(semesterID) + ";";
-            ResultSet rs = statement.executeQuery(get_semester);
+            String get_semester =
+                    "SELECT id_semester, received_points, possible_points, credit_hours FROM Courses " +
+                    "WHERE id_semester=" + semesterID + ";";
+            ResultSet currentSemester = statement.executeQuery(get_semester);
 
-            while(rs.next()) {
-                gpa = Double.toString(rs.getDouble("gpa"));
-                if (gpa.length() >= 4) {
+            while (currentSemester.next()) {
+                double received = currentSemester.getInt("received_points");
+                double possible = currentSemester.getInt("possible_points");
+                int credit_hours = currentSemester.getInt("credit_hours");
+                int currentID = currentSemester.getInt("id_semester");
+
+                if (currentID == semesterID) {
+                    if (received != 0) {
+                        credits += credit_hours;
+                    }
+
+                    if (received/possible >= 0.9) {
+                        quality_points += 4*credit_hours;
+                    } else if (received/possible >= 0.8) {
+                        quality_points += 3*credit_hours;
+                    } else if (received/possible >= 0.7) {
+                        quality_points += 2*credit_hours;
+                    } else if (received/possible >= 0.6) {
+                        quality_points += credit_hours;
+                    }
+                }
+            }
+
+            gpa = Double.toString(quality_points/credits);
+            if (gpa.length() > 4) {
+                if (Character.getNumericValue(gpa.charAt(4)) >= 5) {
+                    gpa = gpa.substring(0, 3) + Integer.toString(Character.getNumericValue(gpa.charAt(3)) + 1);
+                } else {
                     gpa = gpa.substring(0, 4);
                 }
+            }
 
+            if (gpa.equals("NaN") || gpa.equals("0.0")) {
+                current_GPA.setText("N/A");
+            } else {
                 current_GPA.setText(gpa);
             }
+
+
         } catch (Exception e) {
             System.out.println(e);
         }
     }
-    private void setOverallGPA() {
-        double quality_points = 0.0;
-        double credits = 0.0;
+    private void setCompletedGPA() {
+        double quality_points = 0, credits = 0;
+
+        try {
+            String gpa;
+
+            Statement statement = Main.gradebookDB.createStatement();
+            String sql_completedGPA =
+                    "SELECT id, id_semester, received_points, possible_points, credit_hours FROM Courses;";
+            ResultSet grades = statement.executeQuery(sql_completedGPA);
+
+            while (grades.next()) {
+                double received = grades.getInt("received_points");
+                double possible = grades.getInt("possible_points");
+                int credit_hours = grades.getInt("credit_hours");
+                int currentID = grades.getInt("id_semester");
+
+                if (currentID != semesterID) {
+                    if (received != 0) {
+                        credits += credit_hours;
+                    }
+
+                    if (received/possible >= 0.9) {
+                        quality_points += 4*credit_hours;
+                    } else if (received/possible >= 0.8) {
+                        quality_points += 3*credit_hours;
+                    } else if (received/possible >= 0.7) {
+                        quality_points += 2*credit_hours;
+                    } else if (received/possible >= 0.6) {
+                        quality_points += credit_hours;
+                    }
+                }
+            }
+
+            gpa = Double.toString(quality_points/credits);
+
+            // check for rounding
+            if (gpa.length() > 4) {
+                if (Character.getNumericValue(gpa.charAt(4)) >= 5) {
+                    gpa = gpa.substring(0, 3) + Integer.toString(Character.getNumericValue(gpa.charAt(3)) + 1);
+                } else {
+                    gpa = gpa.substring(0, 4);
+                }
+            }
+
+            if (gpa.equals("NaN") || gpa.equals("0.0")) {
+                completed_GPA.setText("N/A");
+            } else {
+                completed_GPA.setText(gpa);
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+    private void setPotentialGPA() {
+        double quality_points = 0.0, credits = 0.0;
 
         try {
             String gpa;
@@ -217,7 +303,7 @@ public class Controller_Home {
             gpa = Double.toString(quality_points/credits);
 
             // check for rounding
-            if (gpa.length() >= 4) {
+            if (gpa.length() > 4) {
                 if (Character.getNumericValue(gpa.charAt(4)) >= 5) {
                     gpa = gpa.substring(0, 3) + Integer.toString(Character.getNumericValue(gpa.charAt(3)) + 1);
                 } else {
@@ -226,9 +312,9 @@ public class Controller_Home {
             }
 
             if (gpa.equals("NaN") || gpa.equals("0.0")) {
-                overall_GPA.setText("N/A");
+                potential_GPA.setText("N/A");
             } else {
-                overall_GPA.setText(gpa);
+                potential_GPA.setText(gpa);
             }
 
         } catch (Exception e) {
@@ -249,6 +335,49 @@ public class Controller_Home {
 
             sql = "DELETE FROM Courses WHERE prefix=\"" + course.prefix + "\" AND number=" + course.number + ";";
             statement.executeUpdate(sql);
+
+            // update gpa
+            sql = "SELECT received_points, possible_points, credit_hours FROM Courses " +
+                    "WHERE id_semester=" + semesterID + ";";
+            ResultSet newGPA = statement.executeQuery(sql);
+            double received = newGPA.getInt("received_points"),
+                    possible = newGPA.getInt("possible_points"),
+                    qualityPoints = 0, credits = 0;
+            int credit_hours = newGPA.getInt("credit_hours");
+            while (newGPA.next()) {
+                if (received != 0) {
+                    credits += credit_hours;
+                }
+
+                if (received/possible >= 0.9) {
+                    qualityPoints += 4*credit_hours;
+                } else if (received/possible >= 0.8) {
+                    qualityPoints += 3*credit_hours;
+                } else if (received/possible >= 0.7) {
+                    qualityPoints += 2*credit_hours;
+                } else if (received/possible >= 0.6) {
+                    qualityPoints += credit_hours;
+                }
+            }
+
+            String gpa = Double.toString(qualityPoints/credits);
+            if (gpa.length() > 4) {
+                if (Character.getNumericValue(gpa.charAt(4)) >= 5) {
+                    gpa = gpa.substring(0, 3) + Integer.toString(Character.getNumericValue(gpa.charAt(3)) + 1);
+                } else {
+                    gpa = gpa.substring(0, 4);
+                }
+            }
+
+
+            sql = "UPDATE Semesters SET credits=credits-" + course.credit_hours + ", gpa=" + gpa + " " +
+                    "WHERE id=" + semesterID + ";";
+
+            statement.executeUpdate(sql);
+
+            setCurrentGPA();
+            setCompletedGPA();
+            setPotentialGPA();
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -311,10 +440,10 @@ public class Controller_Home {
 
         return index;
     }
-    // -------------------------------------------------------------
+    // -------------------------------------------------------------------------------------------------------------
 
 
-    // Navigation --------------------------------------------------
+    // Navigation --------------------------------------------------------------------------------------------------
     @FXML private void goToSemesters() throws IOException {
         Parent SemestersParent = FXMLLoader.load(getClass().getResource("Semesters.fxml"));
         Scene semesters = new Scene(SemestersParent);
