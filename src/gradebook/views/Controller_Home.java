@@ -43,6 +43,8 @@ public class Controller_Home {
     @FXML private TableColumn<Course, String> grade;
     @FXML private TableColumn<Course, Integer> ch;
     static int semesterID;
+    static String completedGPA;
+    static String completedCredits;
 
     public void initialize() {
         back_home.visibleProperty().bind(new SimpleBooleanProperty(titles.size() > 1));
@@ -262,6 +264,8 @@ public class Controller_Home {
             }
 
             gpa = Double.toString(quality_points/credits);
+            completedGPA = gpa;
+            completedCredits = Character.toString(Double.toString(credits).charAt(0));
 
             // check for rounding
             if (gpa.length() > 4) {

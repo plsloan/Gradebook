@@ -455,7 +455,6 @@ public class Controller_Semesters {
                   "WHERE id=" + getSemesterID() + ";";
             statement.executeUpdate(sql);
 
-            // update gpa
         } catch (Exception e) {
             System.out.println(e);
         }
