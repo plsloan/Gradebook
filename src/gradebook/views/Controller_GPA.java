@@ -41,8 +41,13 @@ public class Controller_GPA {
     private ObservableList<Course> hypotheticalCourses = FXCollections.observableArrayList();
 
     public void initialize() {
-        current_GPA.setText(completedGPA);
+        if (Integer.parseInt(completedCredits) != 0) {
+            current_GPA.setText(completedGPA);
+        } else {
+            current_GPA.setText("N/A");
+        }
         current_credits.setText(completedCredits);
+
         courseTable.setColumnResizePolicy(new Callback<TableView.ResizeFeatures, Boolean>() {
             @Override
             public Boolean call(TableView.ResizeFeatures p) {
